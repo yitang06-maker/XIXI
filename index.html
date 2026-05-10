@@ -27,39 +27,39 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
 .scroll::-webkit-scrollbar{display:none;}
 .tabbar{position:absolute;bottom:0;left:0;right:0;background:var(--white);border-top:.5px solid var(--border);padding:10px 0 22px;display:flex;justify-content:space-around;align-items:center;z-index:10;}
 .tabitem{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;flex:1;}
-.tabicon{width:28px;height:28px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#B4B2A9;}
+.tabicon{width:28px;height:28px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#B4B2A9;}
 .tabicon.on{background:var(--purple-bg);color:var(--purple);}
-.tablabel{font-size:11px;color:#888780;}
+.tablabel{font-size:12px;color:#888780;}
 .tablabel.on{color:var(--purple);font-weight:500;}
 .nav{background:var(--white);padding:12px 20px 14px;border-bottom:.5px solid var(--border);}
 .nav-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .card{background:var(--white);border-radius:20px;border:.5px solid var(--border);padding:14px 16px;}
-.section-label{font-size:12px;font-weight:600;color:var(--text4);letter-spacing:.5px;padding:0 4px;margin-bottom:-4px;}
-.ibtn{width:34px;height:34px;border-radius:50%;border:.5px solid var(--border2);background:var(--white);display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:pointer;font-size:16px;position:relative;}
-.ibtn .dot{position:absolute;top:-3px;right:-3px;background:var(--red);color:var(--red-bg);font-size:10px;width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-.dchip{font-size:11px;padding:3px 10px;border-radius:20px;border:.5px solid var(--border2);color:var(--text2);background:var(--white);cursor:pointer;transition:all .15s;}
+.section-label{font-size:13px;font-weight:600;color:var(--text4);letter-spacing:.5px;padding:0 4px;margin-bottom:-4px;}
+.ibtn{width:34px;height:34px;border-radius:50%;border:.5px solid var(--border2);background:var(--white);display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:pointer;font-size:17px;position:relative;}
+.ibtn .dot{position:absolute;top:-3px;right:-3px;background:var(--red);color:var(--red-bg);font-size:11px;width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.dchip{font-size:12px;padding:3px 10px;border-radius:20px;border:.5px solid var(--border2);color:var(--text2);background:var(--white);cursor:pointer;transition:all .15s;}
 .dchip.on{background:var(--purple-bg);color:var(--purple-dark);border-color:var(--purple-light);}
 .logrow{display:flex;align-items:center;padding:8px 10px;background:var(--bg);border-radius:12px;margin-bottom:6px;gap:10px;}
-.logtime{font-size:12px;color:var(--text2);min-width:36px;}
-.logdesc{font-size:13px;color:var(--text);flex:1;}
-.logamt{font-size:12px;color:var(--orange);background:var(--orange-bg);padding:2px 8px;border-radius:8px;}
+.logtime{font-size:13px;color:var(--text2);min-width:36px;}
+.logdesc{font-size:14px;color:var(--text);flex:1;}
+.logamt{font-size:13px;color:var(--orange);background:var(--orange-bg);padding:2px 8px;border-radius:8px;}
 .sechead{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
-.secicon{width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
-.sectitle{font-size:14px;font-weight:500;color:var(--text);flex:1;}
-.addbtn{font-size:12px;color:var(--purple);border:.5px solid var(--purple-light);background:var(--purple-bg);border-radius:20px;padding:3px 10px;cursor:pointer;display:flex;align-items:center;gap:3px;}
+.secicon{width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.sectitle{font-size:15px;font-weight:500;color:var(--text);flex:1;}
+.addbtn{font-size:13px;color:var(--purple);border:.5px solid var(--purple-light);background:var(--purple-bg);border-radius:20px;padding:3px 10px;cursor:pointer;display:flex;align-items:center;gap:3px;}
 .toggle{width:34px;height:20px;border-radius:10px;background:var(--green);position:relative;cursor:pointer;flex-shrink:0;}
 .toggle::after{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:2px;right:2px;transition:all .15s;}
 .toggle.off{background:var(--gray);}
 .toggle.off::after{right:auto;left:2px;}
-.chip{font-size:12px;padding:5px 12px;border-radius:20px;border:.5px solid var(--border2);color:#444441;background:var(--white);cursor:pointer;}
+.chip{font-size:13px;padding:5px 12px;border-radius:20px;border:.5px solid var(--border2);color:#444441;background:var(--white);cursor:pointer;}
 .chip.sel{background:var(--green-bg);border-color:var(--green-border);color:var(--green-dark);}
 .slbar{height:28px;background:#F1EFE8;border-radius:8px;position:relative;overflow:hidden;margin-bottom:6px;}
 .slblock{position:absolute;height:100%;background:#7F77DD;border-radius:6px;opacity:.85;}
-.sllabels{display:flex;justify-content:space-between;font-size:10px;color:var(--text2);margin-bottom:8px;}
+.sllabels{display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:8px;}
 .slstats{display:flex;gap:8px;}
 .slitem{flex:1;background:#F3F2FE;border-radius:10px;padding:8px 6px;text-align:center;}
-.slnum{font-size:15px;font-weight:500;color:var(--text);}
-.sllabel{font-size:11px;color:#444441;margin-top:1px;}
+.slnum{font-size:16px;font-weight:500;color:var(--text);}
+.sllabel{font-size:12px;color:#444441;margin-top:1px;}
 .photocard{background:var(--white);border-radius:20px;border:.5px solid var(--border);overflow:hidden;}
 .photobg{height:130px;background:linear-gradient(135deg,#F8C97A 0%,#F5A97C 40%,#E8A0C8 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;position:relative;overflow:hidden;transition:opacity .2s;}
 .photobg:hover{opacity:.92;}
@@ -67,14 +67,14 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
 .photobg-overlay{position:absolute;inset:0;background:rgba(0,0,0,.25);display:none;align-items:center;justify-content:center;flex-direction:column;gap:6px;}
 .photometa{padding:8px 12px;background:var(--white);}
 .notewrap{display:flex;align-items:center;gap:8px;padding:4px 0;}
-.noteinput{font-size:13px;color:var(--text);border:none;background:var(--white);outline:none;flex:1;font-family:var(--font);}
+.noteinput{font-size:14px;color:var(--text);border:none;background:var(--white);outline:none;flex:1;font-family:var(--font);}
 .noteinput::placeholder{color:var(--text4);}
 .suppgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .suppitem{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:10px;padding:8px 12px;}
-.suppname{font-size:13px;color:var(--text);}
-.healthnote{width:100%;background:var(--white);border:.5px solid var(--border2);border-radius:12px;padding:10px 12px;font-size:13px;color:var(--text);font-family:var(--font);resize:none;outline:none;line-height:1.6;}
+.suppname{font-size:14px;color:var(--text);}
+.healthnote{width:100%;background:var(--white);border:.5px solid var(--border2);border-radius:12px;padding:10px 12px;font-size:14px;color:var(--text);font-family:var(--font);resize:none;outline:none;line-height:1.6;}
 .healthnote::placeholder{color:var(--text4);}
-.savebtn{width:100%;background:var(--black);color:#fff;border:none;border-radius:16px;padding:14px;font-size:15px;font-weight:500;cursor:pointer;font-family:var(--font);}
+.savebtn{width:100%;background:var(--black);color:#fff;border:none;border-radius:16px;padding:14px;font-size:16px;font-weight:500;cursor:pointer;font-family:var(--font);}
 .bottombar{position:absolute;bottom:62px;left:0;right:0;background:var(--white);border-top:.5px solid var(--border);padding:10px 16px 6px;z-index:9;}
 
 /* ── Modal overlay ── */
@@ -83,31 +83,31 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
 .modal-sheet{background:var(--white);border-radius:24px 24px 0 0;width:100%;padding:0 0 32px;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);}
 .modal-overlay.show .modal-sheet{transform:translateY(0);}
 .modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 0;}
-.modal-title{font-size:16px;font-weight:600;color:var(--text);padding:14px 20px 6px;}
+.modal-title{font-size:17px;font-weight:600;color:var(--text);padding:14px 20px 6px;}
 .modal-body{padding:12px 20px 0;}
 .field-group{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
-.field-label{font-size:12px;font-weight:600;color:var(--text2);}
-.field-input{background:var(--bg);border:.5px solid var(--border2);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--text);font-family:var(--font);outline:none;width:100%;-webkit-appearance:none;}
+.field-label{font-size:13px;font-weight:600;color:var(--text2);}
+.field-input{background:var(--bg);border:.5px solid var(--border2);border-radius:12px;padding:11px 14px;font-size:15px;color:var(--text);font-family:var(--font);outline:none;width:100%;-webkit-appearance:none;}
 .field-input:focus{border-color:var(--purple);box-shadow:0 0 0 3px var(--purple-bg);}
 .field-input::placeholder{color:var(--text4);}
 .type-row{display:flex;gap:8px;flex-wrap:wrap;}
-.type-chip{font-size:12px;padding:6px 14px;border-radius:20px;border:.5px solid var(--border2);color:var(--text2);background:var(--white);cursor:pointer;transition:all .15s;}
+.type-chip{font-size:13px;padding:6px 14px;border-radius:20px;border:.5px solid var(--border2);color:var(--text2);background:var(--white);cursor:pointer;transition:all .15s;}
 .type-chip.sel{background:var(--purple-bg);border-color:var(--purple-light);color:var(--purple);}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.modal-confirm{width:100%;background:var(--black);color:#fff;border:none;border-radius:14px;padding:13px;font-size:14px;font-weight:500;cursor:pointer;font-family:var(--font);margin-top:6px;}
-.modal-cancel{width:100%;background:transparent;color:var(--text3);border:none;padding:8px;font-size:13px;cursor:pointer;font-family:var(--font);}
+.modal-confirm{width:100%;background:var(--black);color:#fff;border:none;border-radius:14px;padding:13px;font-size:15px;font-weight:500;cursor:pointer;font-family:var(--font);margin-top:6px;}
+.modal-cancel{width:100%;background:transparent;color:var(--text3);border:none;padding:8px;font-size:14px;cursor:pointer;font-family:var(--font);}
 .time-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.time-label{font-size:11px;color:var(--text4);margin-bottom:4px;}
+.time-label{font-size:12px;color:var(--text4);margin-bottom:4px;}
 
 /* sleep log rows */
 .sleep-logrow{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--bg);border-radius:12px;margin-bottom:6px;}
-.sleep-time-range{font-size:13px;color:var(--text);}
-.sleep-duration{font-size:12px;color:var(--purple);background:var(--purple-bg);padding:2px 8px;border-radius:8px;}
-.sleep-type-tag{font-size:11px;color:var(--text3);}
+.sleep-time-range{font-size:14px;color:var(--text);}
+.sleep-duration{font-size:13px;color:var(--purple);background:var(--purple-bg);padding:2px 8px;border-radius:8px;}
+.sleep-type-tag{font-size:12px;color:var(--text3);}
 
 /* calendar */
 .weekrow{display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:6px;}
-.wd{text-align:center;font-size:12px;color:var(--text4);font-weight:500;padding:3px 0;}
+.wd{text-align:center;font-size:13px;color:var(--text4);font-weight:500;padding:3px 0;}
 .daygrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
 .dcell{aspect-ratio:1;border-radius:10px;overflow:hidden;position:relative;cursor:pointer;background:var(--bg);border:1.5px solid transparent;}
 .dcell.today{border-color:var(--black);}
@@ -116,25 +116,25 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
 .dayblobs{width:100%;height:100%;position:relative;overflow:hidden;border-radius:9px;}
 .blob{border-radius:50%;position:absolute;}
 .dayempty{width:100%;height:100%;border:1px dashed #E0DED8;border-radius:9px;}
-.dnum{position:absolute;top:3px;left:4px;font-size:10px;font-weight:600;color:var(--text);text-shadow:0 0 4px rgba(255,255,255,.9);line-height:1;}
-.dcell.today .dnum{background:var(--black);color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;text-shadow:none;top:3px;left:3px;}
+.dnum{position:absolute;top:3px;left:4px;font-size:11px;font-weight:600;color:var(--text);text-shadow:0 0 4px rgba(255,255,255,.9);line-height:1;}
+.dcell.today .dnum{background:var(--black);color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px;text-shadow:none;top:3px;left:3px;}
 .detcard{background:var(--white);border-radius:20px;border:.5px solid var(--border);overflow:hidden;}
 .detphoto{height:120px;background:linear-gradient(135deg,#F8C97A 0%,#F5A97C 40%,#E8A0C8 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;}
 .detinfo{padding:12px 14px 14px;}
-.detdate{font-size:16px;font-weight:700;color:var(--text);margin-bottom:3px;}
-.detmood{font-size:13px;color:var(--text3);margin-bottom:12px;}
+.detdate{font-size:17px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.detmood{font-size:14px;color:var(--text3);margin-bottom:12px;}
 .detstats{display:flex;justify-content:space-between;padding-top:12px;border-top:.5px solid #F0EDE8;}
 .detstat{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
-.detval{font-size:14px;font-weight:600;color:var(--text);}
-.detlabel{font-size:11px;color:var(--text4);}
+.detval{font-size:15px;font-weight:600;color:var(--text);}
+.detlabel{font-size:12px;color:var(--text4);}
 .detdivider{width:.5px;background:var(--border);align-self:stretch;}
 .mnavbar{background:var(--bg);padding:4px 16px 12px;display:flex;align-items:center;justify-content:space-between;}
 .mnavleft{display:flex;align-items:center;gap:10px;}
-.mtitle{font-size:18px;font-weight:600;color:var(--text);}
-.marrow{width:32px;height:32px;border-radius:50%;border:.5px solid var(--border2);background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:13px;}
-.rbadge{background:var(--purple-bg);color:var(--purple-dark);border-radius:20px;padding:5px 12px;font-size:12px;font-weight:500;border:.5px solid var(--purple-light);}
+.mtitle{font-size:20px;font-weight:600;color:var(--text);}
+.marrow{width:32px;height:32px;border-radius:50%;border:.5px solid var(--border2);background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:14px;}
+.rbadge{background:var(--purple-bg);color:var(--purple-dark);border-radius:20px;padding:5px 12px;font-size:13px;font-weight:500;border:.5px solid var(--purple-light);}
 .accard{background:var(--white);border-radius:20px;border:.5px solid var(--border);padding:18px 16px;display:flex;align-items:center;gap:14px;}
-.acavatar{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#EEEDFE,#CECBF6);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.acavatar{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#EEEDFE,#CECBF6);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
 .babiesrow{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
 .babiesrow::-webkit-scrollbar{display:none;}
 .babycard{background:var(--white);border-radius:20px;border:.5px solid var(--border);overflow:hidden;flex-shrink:0;width:230px;}
@@ -144,54 +144,54 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
 .babyavatarimg img{width:100%;height:100%;object-fit:cover;object-position:center 20%;}
 .babyinfo{padding:28px 14px 14px;}
 .babynamerow{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.babyname{font-size:14px;font-weight:700;color:var(--text);}
-.editbtn{font-size:11px;color:var(--purple);border:.5px solid var(--purple-light);background:var(--purple-bg);border-radius:20px;padding:3px 9px;cursor:pointer;}
+.babyname{font-size:15px;font-weight:700;color:var(--text);}
+.editbtn{font-size:12px;color:var(--purple);border:.5px solid var(--purple-light);background:var(--purple-bg);border-radius:20px;padding:3px 9px;cursor:pointer;}
 .babystats{display:flex;gap:5px;}
 .bstat{flex:1;background:var(--bg);border-radius:10px;padding:6px 4px;text-align:center;}
-.bsval{font-size:12px;font-weight:600;color:var(--text);}
-.bskey{font-size:10px;color:var(--text4);margin-top:1px;}
+.bsval{font-size:13px;font-weight:600;color:var(--text);}
+.bskey{font-size:11px;color:var(--text4);margin-top:1px;}
 .milestonesec{padding:10px 14px 12px;border-top:.5px solid #F0EDE8;}
-.mstitle{font-size:11px;color:var(--text4);margin-bottom:6px;}
+.mstitle{font-size:12px;color:var(--text4);margin-bottom:6px;}
 .msrow{display:flex;gap:4px;flex-wrap:wrap;}
-.mschip{font-size:10px;padding:2px 8px;border-radius:20px;background:var(--green-bg);border:.5px solid var(--green-border);color:var(--green-dark);}
+.mschip{font-size:11px;padding:2px 8px;border-radius:20px;background:var(--green-bg);border:.5px solid var(--green-border);color:var(--green-dark);}
 .babycard2{background:var(--white);border-radius:20px;border:.5px solid var(--border);overflow:hidden;flex-shrink:0;width:230px;position:relative;}
-.newbadge{position:absolute;top:10px;right:10px;z-index:2;background:var(--green-bg);color:var(--green-dark);border:.5px solid var(--green-border);border-radius:20px;padding:3px 8px;font-size:10px;font-weight:600;}
+.newbadge{position:absolute;top:10px;right:10px;z-index:2;background:var(--green-bg);color:var(--green-dark);border:.5px solid var(--green-border);border-radius:20px;padding:3px 8px;font-size:11px;font-weight:600;}
 .babybanner2{height:80px;background:linear-gradient(135deg,#CECBF6 0%,#AFA9EC 50%,#8B84D8 100%);position:relative;}
-.babyavatar2{position:absolute;bottom:-22px;left:16px;width:48px;height:48px;border-radius:50%;border:3px solid var(--white);background:var(--purple-bg);display:flex;align-items:center;justify-content:center;font-size:22px;}
+.babyavatar2{position:absolute;bottom:-22px;left:16px;width:48px;height:48px;border-radius:50%;border:3px solid var(--white);background:var(--purple-bg);display:flex;align-items:center;justify-content:center;font-size:24px;}
 .addbabybtn{background:var(--white);border-radius:20px;border:1.5px dashed var(--purple-light);flex-shrink:0;width:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;padding:16px 10px;min-height:200px;}
-.addbabyicon{width:40px;height:40px;border-radius:50%;background:var(--purple-bg);border:1.5px dashed var(--purple-light);display:flex;align-items:center;justify-content:center;color:var(--purple);font-size:18px;}
-.addbabytext{font-size:12px;color:var(--purple);font-weight:500;text-align:center;line-height:1.4;}
+.addbabyicon{width:40px;height:40px;border-radius:50%;background:var(--purple-bg);border:1.5px dashed var(--purple-light);display:flex;align-items:center;justify-content:center;color:var(--purple);font-size:20px;}
+.addbabytext{font-size:13px;color:var(--purple);font-weight:500;text-align:center;line-height:1.4;}
 .membcard{background:var(--white);border-radius:20px;border:.5px solid var(--border);padding:16px;}
 .membhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.membtitle{font-size:14px;font-weight:600;color:var(--text);}
+.membtitle{font-size:15px;font-weight:600;color:var(--text);}
 .membrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:.5px solid var(--bg);}
 .membrow:last-child{border-bottom:none;padding-bottom:0;}
-.membavatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.membavatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
 .membinfo{flex:1;}
-.membname{font-size:14px;font-weight:500;color:var(--text);}
-.membrole{font-size:12px;color:var(--text3);margin-top:2px;}
-.membbadge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500;}
+.membname{font-size:15px;font-weight:500;color:var(--text);}
+.membrole{font-size:13px;color:var(--text3);margin-top:2px;}
+.membbadge{font-size:12px;padding:3px 9px;border-radius:20px;font-weight:500;}
 .badge-owner{background:var(--orange-bg);color:var(--orange);border:.5px solid var(--orange-border);}
 .badge-edit{background:var(--purple-bg);color:var(--purple);border:.5px solid var(--purple-light);}
 .badge-view{background:var(--bg);color:var(--text3);border:.5px solid var(--border2);}
 .inviterow{display:flex;align-items:center;gap:12px;padding:10px 0 0;cursor:pointer;}
-.inviteicon{width:40px;height:40px;border-radius:50%;border:1.5px dashed var(--purple-light);display:flex;align-items:center;justify-content:center;color:var(--purple);font-size:18px;}
-.invitetext{font-size:13px;color:var(--purple);}
-.delbtn{cursor:pointer;color:var(--text4);padding:0 4px;font-size:17px;flex-shrink:0;line-height:1;transition:color .15s;}
+.inviteicon{width:40px;height:40px;border-radius:50%;border:1.5px dashed var(--purple-light);display:flex;align-items:center;justify-content:center;color:var(--purple);font-size:20px;}
+.invitetext{font-size:14px;color:var(--purple);}
+.delbtn{cursor:pointer;color:var(--text4);padding:0 4px;font-size:19px;flex-shrink:0;line-height:1;transition:color .15s;}
 .delbtn:hover{color:var(--red);}
 /* ── 表情选择器 ── */
 .emoji-picker{display:none;padding:8px;border-top:.5px solid var(--border);flex-wrap:wrap;gap:4px;}
 .emoji-picker.show{display:flex;}
-.emoji-btn{font-size:20px;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:none;transition:background .15s;}
+.emoji-btn{font-size:22px;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:none;transition:background .15s;}
 .emoji-btn:hover{background:var(--bg);}
 /* ── 宝宝年龄卡片 ── */
 .babystat-row{display:flex;align-items:center;justify-content:space-evenly;padding:12px 16px;border-bottom:.5px solid var(--border);}
 .babystat-item{display:flex;flex-direction:column;align-items:center;gap:1px;}
-.babystat-val{font-size:22px;font-weight:700;color:var(--text);}
-.babystat-key{font-size:11px;color:var(--text3);}
+.babystat-val{font-size:24px;font-weight:700;color:var(--text);}
+.babystat-key{font-size:12px;color:var(--text3);}
 .babystat-div{width:.5px;height:30px;background:var(--border);}
 /* ── 日期下拉日历 ── */
-.dp-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:12px;color:var(--text);}
+.dp-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:8px;font-size:13px;color:var(--text);}
 .dp-cell:not(.dp-future){cursor:pointer;}
 .dp-cell:not(.dp-future):hover{background:var(--bg);}
 .dp-cell.dp-today{background:var(--black);color:#fff;font-weight:600;}
@@ -199,7 +199,7 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
 .dp-cell.dp-other{color:var(--text4);}
 .dp-cell.dp-future{opacity:.3;pointer-events:none;}
 /* toast */
-.toast{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:var(--black);color:#fff;border-radius:20px;padding:10px 20px;font-size:13px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s;z-index:100;}
+.toast{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:var(--black);color:#fff;border-radius:20px;padding:10px 20px;font-size:14px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s;z-index:100;}
 .toast.show{opacity:1;}
 /* hidden file input */
 #photoInput{display:none;}
@@ -218,12 +218,12 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
         <div style="width:40px;height:40px;border-radius:50%;overflow:hidden;border:1.5px solid var(--orange-border);flex-shrink:0;">
           <img id="ava1" style="width:100%;height:100%;object-fit:cover;object-position:center 20%;" alt="熙宝"/>
         </div>
-        <div style="font-size:17px;font-weight:600;color:var(--text);">熙宝</div>
+        <div style="font-size:19px;font-weight:600;color:var(--text);">熙宝</div>
       </div>
       <!-- 日期 <> 切换居中 -->
       <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
         <div class="marrow" onclick="switchDate(dateOffset-1)"><i class="ti ti-chevron-left"></i></div>
-        <span style="font-size:13px;font-weight:500;color:var(--text);" id="currentDateLabel">2025年5月6日，星期二</span>
+        <span style="font-size:14px;font-weight:500;color:var(--text);" id="currentDateLabel">2025年5月6日，星期二</span>
         <div class="marrow" id="dateNextArrow" onclick="switchDate(dateOffset+1)"><i class="ti ti-chevron-right"></i></div>
       </div>
     </div>
@@ -251,19 +251,19 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
         <label class="photobg" id="photoBg" for="photoInput" style="cursor:pointer;">
           <img id="photoImg" class="photobg-img" alt="今日照片"/>
           <div class="photobg-overlay" id="photoOverlay">
-            <i class="ti ti-camera" style="font-size:26px;color:#fff;"></i>
-            <div style="font-size:12px;color:#fff;font-weight:500;">更换照片</div>
+            <i class="ti ti-camera" style="font-size:28px;color:#fff;"></i>
+            <div style="font-size:13px;color:#fff;font-weight:500;">更换照片</div>
           </div>
           <div id="photoDefault" style="display:flex;flex-direction:column;align-items:center;gap:6px;">
-            <i class="ti ti-camera" style="font-size:28px;color:#fff;"></i>
-            <div style="font-size:12px;color:#fff;font-weight:500;">点击添加今日照片</div>
+            <i class="ti ti-camera" style="font-size:30px;color:#fff;"></i>
+            <div style="font-size:13px;color:#fff;font-weight:500;">点击添加今日照片</div>
           </div>
         </label>
         <!-- 心情 + 表情选择器 -->
         <div class="photometa">
           <div class="notewrap">
             <input class="noteinput" id="moodInput" placeholder="今天的小心情…"/>
-            <i class="ti ti-mood-smile" id="emojiToggle" onclick="toggleEmojiPicker()" style="font-size:20px;color:var(--text3);cursor:pointer;flex-shrink:0;transition:color .15s;" onmouseover="this.style.color='var(--purple)'" onmouseout="this.style.color='var(--text3)'"></i>
+            <i class="ti ti-mood-smile" id="emojiToggle" onclick="toggleEmojiPicker()" style="font-size:22px;color:var(--text3);cursor:pointer;flex-shrink:0;transition:color .15s;" onmouseover="this.style.color='var(--purple)'" onmouseout="this.style.color='var(--text3)'"></i>
           </div>
           <div class="emoji-picker" id="emojiPicker">
             <button class="emoji-btn" onclick="pickEmoji('😊')">😊</button>
@@ -291,14 +291,14 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
         <div class="sechead">
           <div class="secicon" style="background:var(--orange-bg);color:var(--orange);"><i class="ti ti-bottle"></i></div>
           <span class="sectitle">喂养</span>
-          <div class="addbtn" onclick="openModal('food')"><i class="ti ti-plus" style="font-size:11px"></i>添加</div>
+          <div class="addbtn" onclick="openModal('food')"><i class="ti ti-plus" style="font-size:12px"></i>添加</div>
         </div>
         <div id="foodList">
-          <div class="logrow"><span class="logtime">07:30</span><span style="font-size:15px;">🍼</span><span class="logdesc">母乳 + 配方奶</span><span class="logamt">180ml</span><span class="delbtn">×</span></div>
-          <div class="logrow"><span class="logtime">10:00</span><span style="font-size:15px;">🥣</span><span class="logdesc">米粉 · 南瓜泥</span><span class="logamt">60g</span><span class="delbtn">×</span></div>
-          <div class="logrow"><span class="logtime">13:30</span><span style="font-size:15px;">🍼</span><span class="logdesc">配方奶</span><span class="logamt">150ml</span><span class="delbtn">×</span></div>
+          <div class="logrow"><span class="logtime">07:30</span><span style="font-size:16px;">🍼</span><span class="logdesc">母乳 + 配方奶</span><span class="logamt">180ml</span><span class="delbtn">×</span></div>
+          <div class="logrow"><span class="logtime">10:00</span><span style="font-size:16px;">🥣</span><span class="logdesc">米粉 · 南瓜泥</span><span class="logamt">60g</span><span class="delbtn">×</span></div>
+          <div class="logrow"><span class="logtime">13:30</span><span style="font-size:16px;">🍼</span><span class="logdesc">配方奶</span><span class="logamt">150ml</span><span class="delbtn">×</span></div>
         </div>
-        <div id="foodTotal" style="text-align:center;font-size:12px;color:var(--text2);margin-top:6px;">今日总量 390ml + 辅食</div>
+        <div id="foodTotal" style="text-align:center;font-size:13px;color:var(--text2);margin-top:6px;">今日总量 390ml + 辅食</div>
       </div>
 
       <!-- ⑤ 睡眠 -->
@@ -306,7 +306,7 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
         <div class="sechead">
           <div class="secicon" style="background:var(--purple-bg);color:var(--purple);"><i class="ti ti-moon"></i></div>
           <span class="sectitle">睡眠</span>
-          <div class="addbtn" onclick="openModal('sleep')"><i class="ti ti-plus" style="font-size:11px"></i>记录</div>
+          <div class="addbtn" onclick="openModal('sleep')"><i class="ti ti-plus" style="font-size:12px"></i>记录</div>
         </div>
         <div id="sleepLogList"></div>
         <div class="slbar"><div class="slblock" id="slb1" style="left:0;width:37.5%;"></div><div class="slblock" id="slb2" style="left:45.8%;width:12.5%;"></div><div class="slblock" id="slb3" style="left:66.7%;width:16.7%;"></div></div>
@@ -324,16 +324,16 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
           <div class="secicon" style="background:var(--green-bg);color:#3B6D11;"><i class="ti ti-leaf"></i></div>
           <span class="sectitle">便便</span>
         </div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">今日次数</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px;">今日次数</div>
         <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;" id="poopCountRow">
           <div style="display:flex;gap:8px;" id="poopDots">
-            <div style="width:32px;height:32px;border-radius:50%;background:var(--white);border:.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;font-size:15px;">💩</div>
-            <div style="width:32px;height:32px;border-radius:50%;background:var(--white);border:.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;font-size:15px;">💩</div>
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--white);border:.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;font-size:16px;">💩</div>
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--white);border:.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;font-size:16px;">💩</div>
           </div>
           <div style="width:32px;height:32px;border-radius:50%;border:.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:pointer;background:var(--white);" onclick="addPoop()">+</div>
-          <span style="font-size:13px;color:#444441;" id="poopCount">2次</span>
+          <span style="font-size:14px;color:#444441;" id="poopCount">2次</span>
         </div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">性状</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px;">性状</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;" id="pchips">
           <div class="chip sel">正常</div><div class="chip">偏稀</div><div class="chip">偏干</div><div class="chip">带血丝</div><div class="chip">绿色</div>
         </div>
@@ -389,18 +389,18 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
       </div>
       <div style="height:.5px;background:var(--border);margin:0 4px;"></div>
       <div class="detcard">
-        <div class="detphoto"><i class="ti ti-camera" style="font-size:22px;color:#7F77DD;"></i><div style="font-size:11px;color:#3C3489;">暂无今日照片</div></div>
+        <div class="detphoto"><i class="ti ti-camera" style="font-size:24px;color:#7F77DD;"></i><div style="font-size:12px;color:#3C3489;">暂无今日照片</div></div>
         <div class="detinfo">
           <div class="detdate" id="dDate">5月6日，星期二</div>
           <div class="detmood" id="dMood">第一次吃南瓜泥！</div>
           <div class="detstats">
-            <div class="detstat"><div style="font-size:18px;">🍼</div><div class="detval" id="dFood">390ml</div><div class="detlabel">奶量</div></div>
+            <div class="detstat"><div style="font-size:20px;">🍼</div><div class="detval" id="dFood">390ml</div><div class="detlabel">奶量</div></div>
             <div class="detdivider"></div>
-            <div class="detstat"><div style="font-size:18px;">🌙</div><div class="detval" id="dSleep">12.5h</div><div class="detlabel">睡眠</div></div>
+            <div class="detstat"><div style="font-size:20px;">🌙</div><div class="detval" id="dSleep">12.5h</div><div class="detlabel">睡眠</div></div>
             <div class="detdivider"></div>
-            <div class="detstat"><div style="font-size:18px;">🌿</div><div class="detval" id="dPoop">2次</div><div class="detlabel">便便</div></div>
+            <div class="detstat"><div style="font-size:20px;">🌿</div><div class="detval" id="dPoop">2次</div><div class="detlabel">便便</div></div>
             <div class="detdivider"></div>
-            <div class="detstat"><div style="font-size:18px;">💊</div><div class="detval" id="dSupp">2/4</div><div class="detlabel">补剂</div></div>
+            <div class="detstat"><div style="font-size:20px;">💊</div><div class="detval" id="dSupp">2/4</div><div class="detlabel">补剂</div></div>
           </div>
         </div>
       </div>
@@ -410,21 +410,21 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
   <!-- ═══ PAGE 3: 我的 ═══ -->
   <div class="page" id="p-profile">
     <div class="nav" style="display:flex;align-items:center;justify-content:space-between;">
-      <div style="font-size:18px;font-weight:700;color:var(--text);">我的</div>
+      <div style="font-size:20px;font-weight:700;color:var(--text);">我的</div>
       <div class="ibtn"><i class="ti ti-settings"></i></div>
     </div>
     <div class="scroll" style="margin-top:12px;">
       <div class="accard">
         <div class="acavatar">👩</div>
-        <div style="flex:1;"><div style="font-size:16px;font-weight:600;color:var(--text);">懒人妈妈</div><div style="font-size:12px;color:var(--text3);margin-top:3px;">账号：mama@example.com</div></div>
-        <div style="color:var(--text4);font-size:16px;"><i class="ti ti-chevron-right"></i></div>
+        <div style="flex:1;"><div style="font-size:17px;font-weight:600;color:var(--text);">懒人妈妈</div><div style="font-size:13px;color:var(--text3);margin-top:3px;">账号：mama@example.com</div></div>
+        <div style="color:var(--text4);font-size:17px;"><i class="ti ti-chevron-right"></i></div>
       </div>
       <div class="section-label">我的宝宝</div>
       <div class="babiesrow">
         <div class="babycard">
           <div class="babybanner"><div class="babyavatarwrap"><div class="babyavatarimg"><img id="ava3" alt="熙宝"/></div></div></div>
           <div class="babyinfo">
-            <div class="babynamerow"><div class="babyname">熙宝 🌱</div><div class="editbtn"><i class="ti ti-pencil" style="font-size:10px"></i> 编辑</div></div>
+            <div class="babynamerow"><div class="babyname">熙宝 🌱</div><div class="editbtn"><i class="ti ti-pencil" style="font-size:11px"></i> 编辑</div></div>
             <div class="babystats"><div class="bstat"><div class="bsval" id="profileMonths">--</div><div class="bskey">月龄</div></div><div class="bstat"><div class="bsval">02.16</div><div class="bskey">出生</div></div><div class="bstat"><div class="bsval">6天</div><div class="bskey">已记录</div></div></div>
           </div>
           <div class="milestonesec"><div class="mstitle">🎯 里程碑</div><div class="msrow"><div class="mschip">第一次翻身</div><div class="mschip">吃辅食</div><div class="mschip">长牙</div></div></div>
@@ -433,7 +433,7 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
           <div class="newbadge">✨ 新添加</div>
           <div class="babybanner2"><div class="babyavatar2">👶</div></div>
           <div class="babyinfo">
-            <div class="babynamerow"><div class="babyname">新宝宝 🌱</div><div class="editbtn"><i class="ti ti-pencil" style="font-size:10px"></i> 编辑</div></div>
+            <div class="babynamerow"><div class="babyname">新宝宝 🌱</div><div class="editbtn"><i class="ti ti-pencil" style="font-size:11px"></i> 编辑</div></div>
             <div class="babystats"><div class="bstat"><div class="bsval">0个月</div><div class="bskey">月龄</div></div><div class="bstat"><div class="bsval">待填写</div><div class="bskey">出生</div></div><div class="bstat"><div class="bsval">0天</div><div class="bskey">已记录</div></div></div>
           </div>
           <div class="milestonesec"><div class="mstitle">🎯 里程碑</div><div class="msrow"><div class="mschip" style="background:var(--purple-bg);border-color:var(--purple-light);color:var(--purple);">期待第一个里程碑</div></div></div>
@@ -442,7 +442,7 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
       </div>
       <div class="section-label">宝宝成员</div>
       <div class="membcard">
-        <div class="membhead"><div class="membtitle">参与记录的成员</div><div class="addbtn"><i class="ti ti-plus" style="font-size:11px"></i>邀请</div></div>
+        <div class="membhead"><div class="membtitle">参与记录的成员</div><div class="addbtn"><i class="ti ti-plus" style="font-size:12px"></i>邀请</div></div>
         <div class="membrow"><div class="membavatar" style="background:var(--orange-bg);">👩</div><div class="membinfo"><div class="membname">懒人妈妈</div><div class="membrole">妈妈 · 我</div></div><div class="membbadge badge-owner">创建者</div></div>
         <div class="membrow"><div class="membavatar" style="background:var(--blue-bg);">👨</div><div class="membinfo"><div class="membname">爸爸</div><div class="membrole">加入于 2025.04.20</div></div><div class="membbadge badge-edit">可编辑</div></div>
         <div class="membrow"><div class="membavatar" style="background:var(--green-bg);">🧑</div><div class="membinfo"><div class="membname">阿姨</div><div class="membrole">加入于 2025.04.21</div></div><div class="membbadge badge-edit">可编辑</div></div>
@@ -526,7 +526,7 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
             <input class="field-input" type="time" id="sleepEnd" value="06:00"/>
           </div>
         </div>
-        <div id="sleepDurPreview" style="text-align:center;font-size:13px;color:var(--purple);background:var(--purple-bg);border-radius:10px;padding:8px;margin-bottom:4px;"></div>
+        <div id="sleepDurPreview" style="text-align:center;font-size:14px;color:var(--purple);background:var(--purple-bg);border-radius:10px;padding:8px;margin-bottom:4px;"></div>
         <button class="modal-confirm" onclick="confirmSleep()">✓ 保存</button>
         <button class="modal-cancel" onclick="closeModal('sleep')">取消</button>
       </div>
@@ -651,7 +651,7 @@ function addPoop(){
   poopCnt++;
   const dots=document.getElementById('poopDots');
   const d=document.createElement('div');
-  d.style.cssText='width:32px;height:32px;border-radius:50%;background:var(--white);border:.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;font-size:15px;';
+  d.style.cssText='width:32px;height:32px;border-radius:50%;background:var(--white);border:.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;font-size:16px;';
   d.textContent='💩';
   dots.appendChild(d);
   document.getElementById('poopCount').textContent=poopCnt+'次';
@@ -685,7 +685,7 @@ function confirmFood(){
   const desc=type.replace(/^[^ ]+ /,'')+( note?' · '+note:'');
   const row=document.createElement('div');
   row.className='logrow';
-  row.innerHTML='<span class="logtime">'+time+'</span><span style="font-size:15px;">'+emoji+'</span><span class="logdesc">'+desc+'</span><span class="logamt">'+amt+'</span><span class="delbtn">×</span>';
+  row.innerHTML='<span class="logtime">'+time+'</span><span style="font-size:16px;">'+emoji+'</span><span class="logdesc">'+desc+'</span><span class="logamt">'+amt+'</span><span class="delbtn">×</span>';
   document.getElementById('foodList').appendChild(row);
   updateFoodTotal();
   // reset
