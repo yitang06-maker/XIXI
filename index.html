@@ -220,12 +220,11 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
         </div>
         <div style="font-size:17px;font-weight:600;color:var(--text);">熙宝</div>
       </div>
-      <!-- 日期选择居中 -->
-      <div style="display:flex;justify-content:center;">
-        <div id="datePickerBtn" onclick="toggleDatePicker()" style="display:inline-flex;align-items:center;gap:5px;cursor:pointer;">
-          <span style="font-size:13px;font-weight:500;color:var(--text);" id="currentDateLabel">2025年5月6日，星期二</span>
-          <i class="ti ti-chevron-down" id="datePickerArrow" style="font-size:12px;color:var(--text3);transition:transform .2s;flex-shrink:0;"></i>
-        </div>
+      <!-- 日期 <> 切换居中 -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+        <div class="marrow" onclick="switchDate(dateOffset-1)"><i class="ti ti-chevron-left"></i></div>
+        <span style="font-size:13px;font-weight:500;color:var(--text);" id="currentDateLabel">2025年5月6日，星期二</span>
+        <div class="marrow" id="dateNextArrow" onclick="switchDate(dateOffset+1)"><i class="ti ti-chevron-right"></i></div>
       </div>
     </div>
     <div class="scroll" style="margin-top:12px;">
@@ -249,7 +248,7 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
           </div>
         </div>
         <!-- 照片区域 -->
-        <div class="photobg" id="photoBg" onclick="triggerPhoto()">
+        <label class="photobg" id="photoBg" for="photoInput" style="cursor:pointer;">
           <img id="photoImg" class="photobg-img" alt="今日照片"/>
           <div class="photobg-overlay" id="photoOverlay">
             <i class="ti ti-camera" style="font-size:26px;color:#fff;"></i>
@@ -259,12 +258,12 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
             <i class="ti ti-camera" style="font-size:28px;color:#fff;"></i>
             <div style="font-size:12px;color:#fff;font-weight:500;">点击添加今日照片</div>
           </div>
-        </div>
+        </label>
         <!-- 心情 + 表情选择器 -->
         <div class="photometa">
           <div class="notewrap">
             <input class="noteinput" id="moodInput" placeholder="今天的小心情…"/>
-            <span onclick="toggleEmojiPicker()" style="font-size:18px;cursor:pointer;line-height:1;" id="emojiToggle">😊</span>
+            <i class="ti ti-mood-smile" id="emojiToggle" onclick="toggleEmojiPicker()" style="font-size:20px;color:var(--text3);cursor:pointer;flex-shrink:0;transition:color .15s;" onmouseover="this.style.color='var(--purple)'" onmouseout="this.style.color='var(--text3)'"></i>
           </div>
           <div class="emoji-picker" id="emojiPicker">
             <button class="emoji-btn" onclick="pickEmoji('😊')">😊</button>
@@ -426,7 +425,7 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
           <div class="babybanner"><div class="babyavatarwrap"><div class="babyavatarimg"><img id="ava3" alt="熙宝"/></div></div></div>
           <div class="babyinfo">
             <div class="babynamerow"><div class="babyname">熙宝 🌱</div><div class="editbtn"><i class="ti ti-pencil" style="font-size:10px"></i> 编辑</div></div>
-            <div class="babystats"><div class="bstat"><div class="bsval">7个月</div><div class="bskey">月龄</div></div><div class="bstat"><div class="bsval">10.06</div><div class="bskey">出生</div></div><div class="bstat"><div class="bsval">6天</div><div class="bskey">已记录</div></div></div>
+            <div class="babystats"><div class="bstat"><div class="bsval" id="profileMonths">--</div><div class="bskey">月龄</div></div><div class="bstat"><div class="bsval">02.16</div><div class="bskey">出生</div></div><div class="bstat"><div class="bsval">6天</div><div class="bskey">已记录</div></div></div>
           </div>
           <div class="milestonesec"><div class="mstitle">🎯 里程碑</div><div class="msrow"><div class="mschip">第一次翻身</div><div class="mschip">吃辅食</div><div class="mschip">长牙</div></div></div>
         </div>
@@ -534,24 +533,6 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
     </div>
   </div>
 
-  <!-- 日期选择器浮层 -->
-  <div id="datePickerDrop" style="display:none;position:absolute;left:14px;right:14px;background:var(--white);border-radius:16px;border:.5px solid var(--border);box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:40;padding:14px 12px 12px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-      <div class="marrow" onclick="dpPrevMonth()"><i class="ti ti-chevron-left"></i></div>
-      <span id="dpMonthLabel" style="font-size:13px;font-weight:600;color:var(--text);"></span>
-      <div class="marrow" id="dpNextBtn" onclick="dpNextMonth()"><i class="ti ti-chevron-right"></i></div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);margin-bottom:4px;">
-      <div style="text-align:center;font-size:11px;color:#F08070;padding:2px 0;">日</div>
-      <div style="text-align:center;font-size:11px;color:var(--text4);padding:2px 0;">一</div>
-      <div style="text-align:center;font-size:11px;color:var(--text4);padding:2px 0;">二</div>
-      <div style="text-align:center;font-size:11px;color:var(--text4);padding:2px 0;">三</div>
-      <div style="text-align:center;font-size:11px;color:var(--text4);padding:2px 0;">四</div>
-      <div style="text-align:center;font-size:11px;color:var(--text4);padding:2px 0;">五</div>
-      <div style="text-align:center;font-size:11px;color:var(--purple);padding:2px 0;">六</div>
-    </div>
-    <div id="dpGrid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;"></div>
-  </div>
   <!-- Toast -->
   <div class="toast" id="toast"></div>
 </div>
@@ -564,7 +545,7 @@ const PHOTO='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJ
 function pad(n){return String(n).padStart(2,'0');}
 
 // ── 宝宝年龄计算 ──
-const BIRTH=new Date(2025,9,6); // 2025年10月6日
+const BIRTH=new Date(2026,1,16); // 2026年2月16日
 function updateBabyAge(){
   const today=new Date();
   const diffMs=today-BIRTH;
@@ -577,6 +558,7 @@ function updateBabyAge(){
   if(el)el.textContent=months;
   if(dl)dl.textContent=totalDays;
   if(wl)wl.textContent=weeks;
+  const pm=document.getElementById('profileMonths');if(pm)pm.textContent=months+'个月';
 }
 
 // ── 表情选择器 ──
@@ -588,7 +570,6 @@ function pickEmoji(e){
   const inp=document.getElementById('moodInput');
   inp.value=(inp.value+e).trim();
   document.getElementById('emojiPicker').classList.remove('show');
-  document.getElementById('emojiToggle').textContent=e;
 }
 
 // ── ② 日期切换 ──
@@ -612,90 +593,14 @@ function switchDate(offset){
   const d=getOffsetDate(offset);
   document.getElementById('currentDateLabel').textContent=formatDate(d);
   const tag=offset===0?'今天':offset===-1?'昨天':Math.abs(offset)+'天前';
-  document.getElementById('dateTagLabel').textContent=tag;
+  const tagEl=document.getElementById('dateTagLabel');if(tagEl)tagEl.textContent=tag;
+  // 今天时禁用右箭头
+  const na=document.getElementById('dateNextArrow');
+  if(na){na.style.opacity=offset===0?'0.3':'1';na.style.pointerEvents=offset===0?'none':'auto';}
   if(_initialized&&changed)loadDayData(offset,true);
   _initialized=true;
 }
 
-// ── 日期下拉日历 ──
-let dpOpen=false,dpY,dpM;
-function toggleDatePicker(){
-  dpOpen=!dpOpen;
-  const drop=document.getElementById('datePickerDrop');
-  const arrow=document.getElementById('datePickerArrow');
-  if(dpOpen){
-    // 定位到 nav 底部
-    const btn=document.getElementById('datePickerBtn');
-    const shell=document.querySelector('.shell');
-    const btnRect=btn.getBoundingClientRect();
-    const shellRect=shell.getBoundingClientRect();
-    drop.style.top=(btnRect.bottom-shellRect.top+10)+'px';
-    // 初始化到当前选中月份
-    const sel=getOffsetDate(dateOffset);
-    dpY=sel.getFullYear();dpM=sel.getMonth()+1;
-    renderDpCal();
-  }
-  drop.style.display=dpOpen?'block':'none';
-  arrow.style.transform=dpOpen?'rotate(180deg)':'rotate(0deg)';
-}
-function closeDatePicker(){
-  if(!dpOpen)return;
-  dpOpen=false;
-  document.getElementById('datePickerDrop').style.display='none';
-  document.getElementById('datePickerArrow').style.transform='rotate(0deg)';
-}
-function dpPrevMonth(){dpM--;if(dpM<1){dpM=12;dpY--;}renderDpCal();}
-function dpNextMonth(){
-  const t=new Date();
-  if(dpY>t.getFullYear()||(dpY===t.getFullYear()&&dpM>=t.getMonth()+1))return;
-  dpM++;if(dpM>12){dpM=1;dpY++;}renderDpCal();
-}
-function renderDpCal(){
-  const t=new Date();
-  const tY=t.getFullYear(),tM=t.getMonth()+1,tD=t.getDate();
-  const sel=getOffsetDate(dateOffset);
-  const sY=sel.getFullYear(),sM=sel.getMonth()+1,sD=sel.getDate();
-  document.getElementById('dpMonthLabel').textContent=dpY+'年'+dpM+'月';
-  const nb=document.getElementById('dpNextBtn');
-  const atMax=dpY===tY&&dpM>=tM||dpY>tY;
-  nb.style.opacity=atMax?'0.3':'1';nb.style.pointerEvents=atMax?'none':'auto';
-  const grid=document.getElementById('dpGrid');grid.innerHTML='';
-  const first=new Date(dpY,dpM-1,1).getDay();
-  const days=new Date(dpY,dpM,0).getDate();
-  const prev=new Date(dpY,dpM-1,0).getDate();
-  // 上月补位
-  for(let i=0;i<first;i++){
-    const c=document.createElement('div');c.className='dp-cell dp-other dp-future';
-    c.textContent=prev-first+1+i;grid.appendChild(c);
-  }
-  // 本月
-  for(let d=1;d<=days;d++){
-    const c=document.createElement('div');c.className='dp-cell';c.textContent=d;
-    const future=dpY>tY||(dpY===tY&&dpM>tM)||(dpY===tY&&dpM===tM&&d>tD);
-    const isToday=dpY===tY&&dpM===tM&&d===tD;
-    const isSel=dpY===sY&&dpM===sM&&d===sD;
-    if(future)c.classList.add('dp-future');
-    if(isToday)c.classList.add('dp-today');
-    else if(isSel)c.classList.add('dp-sel');
-    if(!future)c.onclick=()=>{
-      const picked=new Date(dpY,dpM-1,d);
-      const today=new Date(tY,tM-1,tD);
-      const diff=Math.round((picked-today)/(864e5));
-      switchDate(diff);closeDatePicker();
-    };
-    grid.appendChild(c);
-  }
-  // 下月补位
-  const rem=(first+days)%7===0?0:7-(first+days)%7;
-  for(let i=1;i<=rem;i++){
-    const c=document.createElement('div');c.className='dp-cell dp-other dp-future';
-    c.textContent=i;grid.appendChild(c);
-  }
-}
-// 点击外部关闭
-document.querySelector('.shell').addEventListener('click',e=>{
-  if(dpOpen&&!document.getElementById('datePickerDrop').contains(e.target)&&!document.getElementById('datePickerBtn').contains(e.target))closeDatePicker();
-});
 // 初始化当前日期
 switchDate(0);
 
