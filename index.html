@@ -966,6 +966,7 @@ function renderCal(){
   }
   const total=first+days;const rem=total%7===0?0:7-(total%7);
   for(let i=1;i<=rem;i++)grid.appendChild(makeCell(i,true));
+  updateDetail(selD);
 }
 function makeCell(n,other){
   const c=document.createElement('div');c.className='dcell'+(other?' other':'');
