@@ -118,7 +118,7 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
 .dnum{position:absolute;top:3px;left:4px;font-size:11px;font-weight:600;color:var(--text);text-shadow:0 0 4px rgba(255,255,255,.9);line-height:1;}
 .dcell.today .dnum{background:var(--black);color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px;text-shadow:none;top:3px;left:3px;}
 .detcard{background:var(--white);border-radius:20px;border:.5px solid var(--border);overflow:hidden;}
-.detphoto{height:120px;background:linear-gradient(135deg,#F8C97A 0%,#F5A97C 40%,#E8A0C8 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;}
+.detphoto{min-height:120px;background:linear-gradient(135deg,#F8C97A 0%,#F5A97C 40%,#E8A0C8 100%);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;overflow:hidden;}
 .detinfo{padding:12px 14px 14px;}
 .detdate{font-size:18px;font-weight:700;color:var(--text);margin-bottom:3px;}
 .detmood{font-size:15px;color:var(--text3);margin-bottom:12px;}
@@ -393,7 +393,7 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
       <div style="height:.5px;background:var(--border);margin:0 4px;"></div>
       <div class="detcard">
         <div class="detphoto" id="detphotoBox">
-          <img id="detphotoImg" style="display:none;width:100%;height:100%;object-fit:contain;border-radius:12px;" alt="日历照片"/>
+          <img id="detphotoImg" style="display:none;width:100%;height:auto;display:block;" alt="日历照片"/>
           <div id="detphotoEmpty" style="display:flex;flex-direction:column;align-items:center;gap:6px;">
             <i class="ti ti-camera" style="font-size:26px;color:#fff;"></i>
             <div style="font-size:12px;color:#fff;opacity:.8;">暂无今日照片</div>
@@ -902,7 +902,7 @@ const blobCfg=[
   [{w:48,h:48,t:5,l:15}],
   [{w:38,h:38,t:5,l:3},{w:32,h:32,t:20,l:32},{w:28,h:28,t:10,l:58}],
 ];
-let curY=2025,curM=5,selD=6;
+const _now=new Date();let curY=_now.getFullYear(),curM=_now.getMonth()+1,selD=_now.getDate();
 const calWD=['日','一','二','三','四','五','六'];
 
 // 读取某天的 localStorage 数据，返回解析后的对象或 null
@@ -1009,7 +1009,7 @@ function updateDetail(d){
   const dImg=document.getElementById('detphotoImg');
   const dEmp=document.getElementById('detphotoEmpty');
   const photoSrc=stored&&stored.photoSrc&&stored.photoVisible?stored.photoSrc:null;
-  if(photoSrc){dImg.src=photoSrc;dImg.style.display='block';dEmp.style.display='none';}
+  if(photoSrc){dImg.src=photoSrc;dImg.style.display='block';dImg.style.width='100%';dImg.style.height='auto';dEmp.style.display='none';}
   else{dImg.style.display='none';dEmp.style.display='flex';}
 }
 document.getElementById('prevM').addEventListener('click',()=>{curM--;if(curM<1){curM=12;curY--;}renderCal();});
