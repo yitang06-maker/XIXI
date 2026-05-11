@@ -905,6 +905,21 @@ const blobCfg=[
 let curY=2025,curM=5,selD=6;
 const calWD=['日','一','二','三','四','五','六'];
 
+// 读取某天的 localStorage 数据，返回解析后的对象或 null
+function getDayStored(y,m,d){
+  try{
+    const s=localStorage.getItem('baby_'+y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0'));
+    return s?JSON.parse(s):null;
+  }catch(e){return null;}
+}
+// 从 sleepLogs 计算总睡眠时长字符串
+function calcSleepStr(logs){
+  if(!logs||!logs.length)return '--';
+  const total=(logs||[]).reduce((a,l)=>a+(l.dur||0),0);
+  if(!total)return '--';
+  const h=Math.floor(total/60),mn=total%60;
+  return h>0?(h+'h'+(mn>0?' '+mn+'m':'')):(mn+'m');
+}
 function renderCal(){
   document.getElementById('mLabel').textContent=curY+'年'+curM+'月';
   const grid=document.getElementById('dayGrid');grid.innerHTML='';
@@ -914,22 +929,31 @@ function renderCal(){
   const today=new Date();
   const isNow=today.getFullYear()===curY&&today.getMonth()+1===curM;
   const todayD=isNow?today.getDate():-1;
-  let cnt=0;for(let d=1;d<=days;d++){if(calRecords[curY+'-'+curM+'-'+d])cnt++;}
+  // 统计已记录天数（localStorage优先，兜底calRecords）
+  let cnt=0;
+  for(let d=1;d<=days;d++){
+    if(getDayStored(curY,curM,d)||calRecords[curY+'-'+curM+'-'+d])cnt++;
+  }
   document.getElementById('rBadge').textContent='已记录 '+cnt+' 天';
   for(let i=0;i<first;i++)grid.appendChild(makeCell(prev-first+1+i,true));
   for(let d=1;d<=days;d++){
-    const key=curY+'-'+curM+'-'+d;const rec=calRecords[key];
+    const rec=calRecords[curY+'-'+curM+'-'+d];
+    const stored=getDayStored(curY,curM,d);
     const cell=document.createElement('div');cell.className='dcell';
     if(d===todayD)cell.classList.add('today');
     if(d===selD)cell.classList.add('sel');
-    // 先尝试从 localStorage 读取照片
-    const pm2=String(curM).padStart(2,'0'),pd2=String(d).padStart(2,'0');
-    let cellPhoto=null;
-    try{const cs=localStorage.getItem('baby_'+curY+'-'+pm2+'-'+pd2);if(cs){const co=JSON.parse(cs);if(co.photoSrc&&co.photoVisible)cellPhoto=co.photoSrc;}}catch(e){}
+    // 读照片
+    const cellPhoto=stored&&stored.photoSrc&&stored.photoVisible?stored.photoSrc:null;
     if(cellPhoto){
       const ti=document.createElement('img');ti.src=cellPhoto;ti.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;opacity:.75;';
       cell.style.position='relative';cell.style.overflow='hidden';
       cell.appendChild(ti);
+    } else if(stored){
+      // 有 localStorage 记录但无照片：显示小彩点标记
+      const dot=document.createElement('div');
+      dot.style.cssText='position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--purple);opacity:.7;';
+      cell.style.position='relative';cell.appendChild(dot);
+      const e=document.createElement('div');e.className='dayempty';cell.appendChild(e);
     } else if(rec){
       const bl=document.createElement('div');bl.className='dayblobs';bl.style.background=rec.blobs[0]+'22';
       const cfg=blobCfg[(d-1)%blobCfg.length];
@@ -952,16 +976,39 @@ function updateDetail(d){
   const date=new Date(curY,curM-1,d);
   const wd=calWD[date.getDay()];
   document.getElementById('dDate').textContent=curM+'月'+d+'日，星期'+wd;
+  const stored=getDayStored(curY,curM,d);
   const rec=calRecords[curY+'-'+curM+'-'+d];
-  if(rec){document.getElementById('dMood').textContent=rec.mood;document.getElementById('dMood').style.color='#888780';document.getElementById('dFood').textContent=rec.food;document.getElementById('dSleep').textContent=rec.sleep;document.getElementById('dPoop').textContent=rec.poop;document.getElementById('dSupp').textContent=rec.supp;}
-  else{document.getElementById('dMood').textContent='这天还没有记录～';document.getElementById('dMood').style.color='#D3D1C7';['dFood','dSleep','dPoop','dSupp'].forEach(i=>document.getElementById(i).textContent='--');}
-  // 从 localStorage 加载照片
-  const pm=String(curM).padStart(2,'0'),pd=String(d).padStart(2,'0');
-  const stored=localStorage.getItem('baby_'+curY+'-'+pm+'-'+pd);
+  const moodEl=document.getElementById('dMood');
+  if(stored){
+    // 优先使用真实 localStorage 数据
+    moodEl.textContent=stored.mood||'（无心情记录）';
+    moodEl.style.color=stored.mood?'#888780':'#D3D1C7';
+    // 食物总量：从 foodTotalText 提取
+    let foodStr='--';
+    const ft=stored.foodTotalText||'';
+    if(ft&&ft!=='暂无记录'){const fm=ft.match(/\d+ml/i);foodStr=fm?fm[0]:ft.replace('今日总量','').trim()||'--';}
+    document.getElementById('dFood').textContent=foodStr;
+    // 睡眠：从 sleepLogs 合计
+    document.getElementById('dSleep').textContent=calcSleepStr(stored.sleepLogs);
+    // 便便
+    document.getElementById('dPoop').textContent=(stored.poopCnt||0)>0?(stored.poopCnt+'次'):'--';
+    // 补剂（未单独存储，显示健康状态标签）
+    const hc=stored.healthChipSel||'';
+    document.getElementById('dSupp').textContent=hc||'--';
+  } else if(rec){
+    moodEl.textContent=rec.mood;moodEl.style.color='#888780';
+    document.getElementById('dFood').textContent=rec.food;
+    document.getElementById('dSleep').textContent=rec.sleep;
+    document.getElementById('dPoop').textContent=rec.poop;
+    document.getElementById('dSupp').textContent=rec.supp;
+  } else {
+    moodEl.textContent='这天还没有记录～';moodEl.style.color='#D3D1C7';
+    ['dFood','dSleep','dPoop','dSupp'].forEach(i=>document.getElementById(i).textContent='--');
+  }
+  // 照片
   const dImg=document.getElementById('detphotoImg');
   const dEmp=document.getElementById('detphotoEmpty');
-  let photoSrc=null;
-  if(stored){try{const obj=JSON.parse(stored);photoSrc=obj.photoSrc&&obj.photoVisible?obj.photoSrc:null;}catch(e){}}
+  const photoSrc=stored&&stored.photoSrc&&stored.photoVisible?stored.photoSrc:null;
   if(photoSrc){dImg.src=photoSrc;dImg.style.display='block';dEmp.style.display='none';}
   else{dImg.style.display='none';dEmp.style.display='flex';}
 }
