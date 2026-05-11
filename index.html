@@ -64,7 +64,7 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
 .photobg{aspect-ratio:16/9;height:auto;background:linear-gradient(135deg,#F8C97A 0%,#F5A97C 40%,#E8A0C8 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;position:relative;overflow:hidden;transition:opacity .2s;}
 .photobg:hover{opacity:.92;}
 .photobg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;}
-.photobg-overlay{position:absolute;inset:0;background:rgba(0,0,0,.25);display:none;align-items:center;justify-content:center;flex-direction:column;gap:6px;}
+.photobg-overlay{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;}
 .photometa{padding:8px 12px;background:var(--white);}
 .notewrap{display:flex;align-items:center;gap:8px;padding:4px 0;}
 .noteinput{font-size:15px;color:var(--text);border:none;background:var(--white);outline:none;flex:1;font-family:var(--font);}
@@ -221,7 +221,7 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
     <div class="nav" style="text-align:center;">
       <!-- 宝宝信息居中 -->
       <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px;">
-        <div style="width:40px;height:40px;border-radius:50%;overflow:hidden;border:1.5px solid var(--orange-border);flex-shrink:0;">
+        <div style="width:60px;height:60px;border-radius:50%;overflow:hidden;border:2px solid var(--orange-border);flex-shrink:0;">
           <img id="ava1" style="width:100%;height:100%;object-fit:cover;object-position:center 20%;" alt="熙宝"/>
         </div>
         <div style="font-size:19px;font-weight:600;color:var(--text);">熙宝</div>
@@ -257,12 +257,11 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
         <label class="photobg" id="photoBg" for="photoInput" style="cursor:pointer;">
           <img id="photoImg" class="photobg-img" alt="今日照片"/>
           <div class="photobg-overlay" id="photoOverlay">
-            <i class="ti ti-camera" style="font-size:30px;color:#fff;"></i>
-            <div style="font-size:14px;color:#fff;font-weight:500;">更换照片</div>
+            <i class="ti ti-refresh" style="font-size:18px;color:#fff;"></i>
           </div>
           <div id="photoDefault" style="display:flex;flex-direction:column;align-items:center;gap:6px;">
             <i class="ti ti-camera" style="font-size:32px;color:#fff;"></i>
-            <div style="font-size:14px;color:#fff;font-weight:500;">点击添加今日照片</div>
+            <div id="photoDefaultText" style="font-size:14px;color:#fff;font-weight:500;">点击添加今日照片</div>
           </div>
         </label>
         <!-- 心情 + 表情选择器 -->
@@ -393,7 +392,13 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
       </div>
       <div style="height:.5px;background:var(--border);margin:0 4px;"></div>
       <div class="detcard">
-        <div class="detphoto"><i class="ti ti-camera" style="font-size:26px;color:#7F77DD;"></i><div style="font-size:12px;color:#3C3489;">暂无今日照片</div></div>
+        <div class="detphoto" id="detphotoBox">
+          <img id="detphotoImg" style="display:none;width:100%;height:100%;object-fit:contain;border-radius:12px;" alt="日历照片"/>
+          <div id="detphotoEmpty" style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <i class="ti ti-camera" style="font-size:26px;color:#fff;"></i>
+            <div style="font-size:12px;color:#fff;opacity:.8;">暂无今日照片</div>
+          </div>
+        </div>
         <div class="detinfo">
           <div class="detdate" id="dDate">5月6日，星期二</div>
           <div class="detmood" id="dMood">第一次吃南瓜泥！</div>
@@ -601,6 +606,9 @@ function switchDate(offset){
   // 今天时禁用右箭头
   const na=document.getElementById('dateNextArrow');
   if(na){na.style.opacity=offset===0?'0.3':'1';na.style.pointerEvents=offset===0?'none':'auto';}
+  // 更新照片默认文案：今天"点击添加今日照片"，历史日期"上传照片"
+  const pdt=document.getElementById('photoDefaultText');
+  if(pdt)pdt.textContent=offset===0?'点击添加今日照片':'上传照片';
   if(_initialized&&changed)loadDayData(offset,true);
   _initialized=true;
 }
@@ -914,7 +922,15 @@ function renderCal(){
     const cell=document.createElement('div');cell.className='dcell';
     if(d===todayD)cell.classList.add('today');
     if(d===selD)cell.classList.add('sel');
-    if(rec){
+    // 先尝试从 localStorage 读取照片
+    const pm2=String(curM).padStart(2,'0'),pd2=String(d).padStart(2,'0');
+    let cellPhoto=null;
+    try{const cs=localStorage.getItem('baby_'+curY+'-'+pm2+'-'+pd2);if(cs){const co=JSON.parse(cs);if(co.photoSrc&&co.photoVisible)cellPhoto=co.photoSrc;}}catch(e){}
+    if(cellPhoto){
+      const ti=document.createElement('img');ti.src=cellPhoto;ti.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;opacity:.75;';
+      cell.style.position='relative';cell.style.overflow='hidden';
+      cell.appendChild(ti);
+    } else if(rec){
       const bl=document.createElement('div');bl.className='dayblobs';bl.style.background=rec.blobs[0]+'22';
       const cfg=blobCfg[(d-1)%blobCfg.length];
       rec.blobs.forEach((c,i)=>{const b=document.createElement('div');b.className='blob';const s=cfg[i]||cfg[0];b.style.cssText='width:'+s.w+'%;height:'+s.h+'%;background:'+c+';top:'+s.t+'%;left:'+s.l+'%;';bl.appendChild(b);});
@@ -939,6 +955,15 @@ function updateDetail(d){
   const rec=calRecords[curY+'-'+curM+'-'+d];
   if(rec){document.getElementById('dMood').textContent=rec.mood;document.getElementById('dMood').style.color='#888780';document.getElementById('dFood').textContent=rec.food;document.getElementById('dSleep').textContent=rec.sleep;document.getElementById('dPoop').textContent=rec.poop;document.getElementById('dSupp').textContent=rec.supp;}
   else{document.getElementById('dMood').textContent='这天还没有记录～';document.getElementById('dMood').style.color='#D3D1C7';['dFood','dSleep','dPoop','dSupp'].forEach(i=>document.getElementById(i).textContent='--');}
+  // 从 localStorage 加载照片
+  const pm=String(curM).padStart(2,'0'),pd=String(d).padStart(2,'0');
+  const stored=localStorage.getItem('baby_'+curY+'-'+pm+'-'+pd);
+  const dImg=document.getElementById('detphotoImg');
+  const dEmp=document.getElementById('detphotoEmpty');
+  let photoSrc=null;
+  if(stored){try{const obj=JSON.parse(stored);photoSrc=obj.photoSrc&&obj.photoVisible?obj.photoSrc:null;}catch(e){}}
+  if(photoSrc){dImg.src=photoSrc;dImg.style.display='block';dEmp.style.display='none';}
+  else{dImg.style.display='none';dEmp.style.display='flex';}
 }
 document.getElementById('prevM').addEventListener('click',()=>{curM--;if(curM<1){curM=12;curY--;}renderCal();});
 document.getElementById('nextM').addEventListener('click',()=>{curM++;if(curM>12){curM=1;curY++;}renderCal();});
