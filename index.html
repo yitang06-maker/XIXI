@@ -638,6 +638,12 @@ photoInput.addEventListener('change',e=>{
     img.style.display='block';
     document.getElementById('photoDefault').style.display='none';
     document.getElementById('photoOverlay').style.display='flex';
+    // 立即将照片写入 localStorage，不等保存按钮
+    const key=getDateKey(dateOffset);
+    let data={};
+    try{const s=localStorage.getItem(key);if(s)data=JSON.parse(s);}catch(e){}
+    data.photoSrc=ev.target.result;data.photoVisible=true;
+    try{localStorage.setItem(key,JSON.stringify(data));}catch(e){showToast('照片文件太大，无法保存');}
   };
   reader.readAsDataURL(file);
   photoInput.value='';
