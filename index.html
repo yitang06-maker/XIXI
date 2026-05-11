@@ -638,12 +638,8 @@ photoInput.addEventListener('change',e=>{
     img.style.display='block';
     document.getElementById('photoDefault').style.display='none';
     document.getElementById('photoOverlay').style.display='flex';
-    // 立即将照片写入 localStorage，不等保存按钮
-    const key=getDateKey(dateOffset);
-    let data={};
-    try{const s=localStorage.getItem(key);if(s)data=JSON.parse(s);}catch(e){}
-    data.photoSrc=ev.target.result;data.photoVisible=true;
-    try{localStorage.setItem(key,JSON.stringify(data));}catch(e){showToast('照片文件太大，无法保存');}
+    // 照片单独存入独立 key，不会被 saveRecord 覆盖
+    try{localStorage.setItem(getPhotoKey(dateOffset),JSON.stringify({photoSrc:ev.target.result,photoVisible:true}));}catch(e){showToast('照片文件太大，无法保存');}
   };
   reader.readAsDataURL(file);
   photoInput.value='';
@@ -778,6 +774,16 @@ function getDateKey(offset){
   const d=getOffsetDate(offset);
   return 'baby_'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
+function getPhotoKey(offset){
+  return getDateKey(offset).replace('baby_','baby_photo_');
+}
+function getPhotoKeyYMD(y,m,d){
+  return 'baby_photo_'+y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+}
+// 读取某天照片（从独立 photo key）
+function loadPhotoForKey(photoKey){
+  try{const s=localStorage.getItem(photoKey);return s?JSON.parse(s):null;}catch(e){return null;}
+}
 function clearDayData(){
   document.getElementById('foodList').innerHTML='';
   document.getElementById('foodTotal').textContent='暂无记录';
@@ -829,6 +835,13 @@ function loadDayData(offset,clearIfEmpty){
   const saved=localStorage.getItem(key);
   if(saved){try{restoreDayData(JSON.parse(saved));}catch(e){}}
   else if(clearIfEmpty)clearDayData();
+  // 始终从独立 photo key 恢复照片（优先级最高，不被 saveRecord 覆盖）
+  const photo=loadPhotoForKey(getPhotoKey(offset));
+  if(photo&&photo.photoSrc&&photo.photoVisible){
+    const img=document.getElementById('photoImg');img.src=photo.photoSrc;img.style.display='block';
+    document.getElementById('photoDefault').style.display='none';
+    document.getElementById('photoOverlay').style.display='flex';
+  }
 }
 
 // ── 食物总量 ──
@@ -878,7 +891,7 @@ function saveRecord(){
     photoVisible:document.getElementById('photoImg').style.display!=='none',
   };
   try{localStorage.setItem(getDateKey(dateOffset),JSON.stringify(data));}catch(e){
-    // 图片过大时不保存图片
+    // 主数据太大，去掉图片字段重试（照片已在独立 key 中，不受影响）
     data.photoSrc='';data.photoVisible=false;
     try{localStorage.setItem(getDateKey(dateOffset),JSON.stringify(data));}catch(e2){}
   }
@@ -911,11 +924,15 @@ const blobCfg=[
 const _now=new Date();let curY=_now.getFullYear(),curM=_now.getMonth()+1,selD=_now.getDate();
 const calWD=['日','一','二','三','四','五','六'];
 
-// 读取某天的 localStorage 数据，返回解析后的对象或 null
+// 读取某天的 localStorage 数据，返回解析后的对象或 null（照片从独立 key 读取）
 function getDayStored(y,m,d){
   try{
     const s=localStorage.getItem('baby_'+y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0'));
-    return s?JSON.parse(s):null;
+    const data=s?JSON.parse(s):{};
+    // 照片从独立 key 读取，优先级高于主数据
+    const ps=localStorage.getItem(getPhotoKeyYMD(y,m,d));
+    if(ps){const pd=JSON.parse(ps);data.photoSrc=pd.photoSrc;data.photoVisible=pd.photoVisible;}
+    return (s||ps)?data:null;
   }catch(e){return null;}
 }
 // 从 sleepLogs 计算总睡眠时长字符串
