@@ -633,13 +633,24 @@ photoInput.addEventListener('change',e=>{
   if(!file)return;
   const reader=new FileReader();
   reader.onload=ev=>{
-    const img=document.getElementById('photoImg');
-    img.src=ev.target.result;
-    img.style.display='block';
-    document.getElementById('photoDefault').style.display='none';
-    document.getElementById('photoOverlay').style.display='flex';
-    // 照片单独存入独立 key，不会被 saveRecord 覆盖
-    try{localStorage.setItem(getPhotoKey(dateOffset),JSON.stringify({photoSrc:ev.target.result,photoVisible:true}));}catch(e){showToast('照片文件太大，无法保存');}
+    // 用 Canvas 压缩后再存储，避免超出 localStorage 限制
+    const raw=new Image();
+    raw.onload=()=>{
+      const MAX=1200;
+      let w=raw.width,h=raw.height;
+      if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+      if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
+      const cvs=document.createElement('canvas');cvs.width=w;cvs.height=h;
+      cvs.getContext('2d').drawImage(raw,0,0,w,h);
+      const compressed=cvs.toDataURL('image/jpeg',0.75);
+      const img=document.getElementById('photoImg');
+      img.src=compressed;img.style.display='block';
+      document.getElementById('photoDefault').style.display='none';
+      document.getElementById('photoOverlay').style.display='flex';
+      try{localStorage.setItem(getPhotoKey(dateOffset),JSON.stringify({photoSrc:compressed,photoVisible:true}));}
+      catch(e){showToast('照片仍然太大，请换一张试试');}
+    };
+    raw.src=ev.target.result;
   };
   reader.readAsDataURL(file);
   photoInput.value='';
