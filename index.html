@@ -210,6 +210,9 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
   .modal-overlay{position:fixed;border-radius:0;}
 }
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 </head>
 <body>
 <input type="file" id="photoInput" accept="image/*"/>
@@ -626,7 +629,21 @@ function switchTab(name){
   if(name==='calendar')renderCal();
 }
 
-// ── ③ 照片上传 ──
+// ── Firebase 初始化 ──
+firebase.initializeApp({apiKey:"AIzaSyD40K-YeD0yjOQoFGnIBBgUGJGWth1d8Hk",authDomain:"baby-tracker-8fc48.firebaseapp.com",projectId:"baby-tracker-8fc48",storageBucket:"baby-tracker-8fc48.firebasestorage.app",messagingSenderId:"469326650154",appId:"1:469326650154:web:7726dfdec0db5ef7815c53"});
+const _auth=firebase.auth();
+const _storage=firebase.storage();
+let _uid=null;
+_auth.signInAnonymously().catch(()=>{});
+_auth.onAuthStateChanged(u=>{_uid=u?u.uid:null;});
+
+function _showPhotoUI(src){
+  const img=document.getElementById('photoImg');img.src=src;img.style.display='block';
+  document.getElementById('photoDefault').style.display='none';
+  document.getElementById('photoOverlay').style.display='flex';
+}
+
+// ── ③ 照片上传（Firebase Storage）──
 const photoInput=document.getElementById('photoInput');
 photoInput.addEventListener('change',e=>{
   const file=e.target.files[0];
@@ -635,24 +652,24 @@ photoInput.addEventListener('change',e=>{
   reader.onload=ev=>{
     const raw=new Image();
     raw.onload=()=>{
-      // 逐级压缩直到能存入 localStorage
-      const steps=[{max:1200,q:0.8},{max:900,q:0.7},{max:700,q:0.6},{max:500,q:0.5}];
-      let compressed=null;
-      for(const {max,q} of steps){
-        let w=raw.width,h=raw.height;
-        if(w>h){if(w>max){h=Math.round(h*max/w);w=max;}}
-        else{if(h>max){w=Math.round(w*max/h);h=max;}}
-        const cvs=document.createElement('canvas');cvs.width=w;cvs.height=h;
-        cvs.getContext('2d').drawImage(raw,0,0,w,h);
-        const data=cvs.toDataURL('image/jpeg',q);
-        try{localStorage.setItem(getPhotoKey(dateOffset),JSON.stringify({photoSrc:data,photoVisible:true}));compressed=data;break;}
-        catch(e){}
-      }
-      if(!compressed){showToast('照片无法保存，请清理后重试');return;}
-      const img=document.getElementById('photoImg');
-      img.src=compressed;img.style.display='block';
-      document.getElementById('photoDefault').style.display='none';
-      document.getElementById('photoOverlay').style.display='flex';
+      const MAX=1200;let w=raw.width,h=raw.height;
+      if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
+      const cvs=document.createElement('canvas');cvs.width=w;cvs.height=h;
+      cvs.getContext('2d').drawImage(raw,0,0,w,h);
+      cvs.toBlob(async blob=>{
+        const dateStr=getDateKey(dateOffset).replace('baby_','');
+        if(!_uid){showToast('正在连接，请稍后重试');return;}
+        showToast('上传中…');
+        try{
+          const ref=_storage.ref('users/'+_uid+'/photos/'+dateStr+'.jpg');
+          await ref.put(blob,{contentType:'image/jpeg'});
+          const url=await ref.getDownloadURL();
+          _showPhotoUI(url);
+          // 将 URL（很小）存入 localStorage，供日历读取
+          try{localStorage.setItem(getPhotoKey(dateOffset),JSON.stringify({photoSrc:url,photoVisible:true}));}catch(err){}
+          showToast('照片已上传 ✓');
+        }catch(err){showToast('上传失败，请检查网络连接');}
+      },'image/jpeg',0.85);
     };
     raw.src=ev.target.result;
   };
