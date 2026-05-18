@@ -210,9 +210,6 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
   .modal-overlay{position:fixed;border-radius:0;}
 }
 </style>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <input type="file" id="photoInput" accept="image/*"/>
@@ -664,9 +661,12 @@ photoInput.addEventListener('change',e=>{
           const json=await res.json();
           const url=json.secure_url;
           _showPhotoUI(url);
-          try{localStorage.setItem(getPhotoKey(dateOffset),JSON.stringify({photoSrc:url,photoVisible:true}));}catch(err){}
-          // 同步到 Firestore
-          if(_uid){const _ds=getDateKey(dateOffset).replace('baby_','');_db.collection('users').doc(_uid).collection('days').doc(_ds).set({photoSrc:url,photoVisible:true},{merge:true}).catch(()=>{});}
+          // 保存照片 URL 到 IndexedDB
+          const _ds=getDateKey(dateOffset).replace('baby_','');
+          const _existing=await idbLoad(_ds)||{};
+          _existing.photoSrc=url;_existing.photoVisible=true;
+          await idbSave(_ds,_existing);
+          _calCache[_ds]=_existing; // 更新内存缓存
           showToast('照片已上传 ✓');
         }catch(err){showToast('上传失败，请检查网络连接');}
       },'image/jpeg',0.85);
@@ -863,24 +863,17 @@ function restoreDayData(data){
   recalcSleep();
 }
 async function loadDayData(offset,clearIfEmpty){
-  const key=getDateKey(offset);
-  const dateStr=key.replace('baby_','');
-  // 优先从 Firestore 加载
-  if(_uid){
-    try{
-      const doc=await _db.collection('users').doc(_uid).collection('days').doc(dateStr).get();
-      if(doc.exists){
-        const data=doc.data();
-        restoreDayData(data);
-        if(data.photoSrc&&data.photoVisible)_showPhotoUI(data.photoSrc);
-        try{localStorage.setItem(key,JSON.stringify(data));}catch(e){}
-        return;
-      }
-    }catch(e){}
+  const dateStr=getDateKey(offset).replace('baby_','');
+  // 优先从 IndexedDB 加载
+  const idata=await idbLoad(dateStr);
+  if(idata){
+    restoreDayData(idata);
+    if(idata.photoSrc&&idata.photoVisible)_showPhotoUI(idata.photoSrc);
+    return;
   }
-  // 回退到 localStorage
-  const saved=localStorage.getItem(key);
-  if(saved){try{restoreDayData(JSON.parse(saved));}catch(e){}}
+  // 回退到 localStorage（兼容旧数据）
+  const saved=localStorage.getItem(getDateKey(offset));
+  if(saved){try{const d=JSON.parse(saved);restoreDayData(d);if(d.photoSrc&&d.photoVisible)_showPhotoUI(d.photoSrc);}catch(e){}}
   else if(clearIfEmpty)clearDayData();
   const photo=loadPhotoForKey(getPhotoKey(offset));
   if(photo&&photo.photoSrc&&photo.photoVisible)_showPhotoUI(photo.photoSrc);
@@ -915,8 +908,7 @@ function deleteSleepLog(start,end,btn){
 
 // ── 保存 ──
 async function saveRecord(){
-  const key=getDateKey(dateOffset);
-  const dateStr=key.replace('baby_','');
+  const dateStr=getDateKey(dateOffset).replace('baby_','');
   const data={
     foodListHTML:document.getElementById('foodList').innerHTML,
     foodTotalText:document.getElementById('foodTotal').textContent,
@@ -934,16 +926,7 @@ async function saveRecord(){
     photoSrc:document.getElementById('photoImg').src||'',
     photoVisible:document.getElementById('photoImg').style.display!=='none',
   };
-  // 存 localStorage（本地缓存）
-  try{localStorage.setItem(key,JSON.stringify(data));}catch(e){
-    data.photoSrc='';data.photoVisible=false;
-    try{localStorage.setItem(key,JSON.stringify(data));}catch(e2){}
-  }
-  // 存 Firestore（云端持久化）
-  if(_uid){
-    try{await _db.collection('users').doc(_uid).collection('days').doc(dateStr).set(data);}
-    catch(e){console.warn('Firestore save failed',e);}
-  }
+  await idbSave(dateStr,data);
   showToast('今日记录已保存 ✓');
 }
 
@@ -974,9 +957,8 @@ const _now=new Date();let curY=_now.getFullYear(),curM=_now.getMonth()+1,selD=_n
 const calWD=['日','一','二','三','四','五','六'];
 
 // 读取某天的 localStorage 数据，返回解析后的对象或 null（照片从独立 key 读取）
-let _calCache={}; // Firestore 月数据缓存
+let _calCache={}; // 月数据内存缓存
 function getDayStored(y,m,d){
-  // 优先用 Firestore 缓存
   const ck=y+'-'+String(m).padStart(2,'0')+'-'+String(d).padStart(2,'0');
   if(_calCache[ck])return _calCache[ck];
   try{
@@ -996,16 +978,9 @@ function calcSleepStr(logs){
   return h>0?(h+'h'+(mn>0?' '+mn+'m':'')):(mn+'m');
 }
 async function renderCal(){
-  // 从 Firestore 加载当月数据到缓存
-  if(_uid){
-    const ms=curY+'-'+String(curM).padStart(2,'0');
-    try{
-      const snap=await _db.collection('users').doc(_uid).collection('days')
-        .where(firebase.firestore.FieldPath.documentId(),'>=',ms+'-01')
-        .where(firebase.firestore.FieldPath.documentId(),'<=',ms+'-31').get();
-      snap.forEach(doc=>{_calCache[doc.id]=doc.data();});
-    }catch(e){}
-  }
+  // 从 IndexedDB 加载当月数据到内存缓存
+  const monthData=await idbLoadMonth(curY,curM);
+  monthData.forEach(row=>{_calCache[row.date]=row;});
   document.getElementById('mLabel').textContent=curY+'年'+curM+'月';
   const grid=document.getElementById('dayGrid');grid.innerHTML='';
   const first=new Date(curY,curM-1,1).getDay();
@@ -1100,21 +1075,46 @@ function updateDetail(d){
 }
 document.getElementById('prevM').addEventListener('click',()=>{curM--;if(curM<1){curM=12;curY--;}renderCal();});
 document.getElementById('nextM').addEventListener('click',()=>{curM++;if(curM>12){curM=1;curY++;}renderCal();});
-// ── Firebase 初始化 ──
-firebase.initializeApp({apiKey:"AIzaSyD40K-YeD0yjOQoFGnIBBgUGJGWth1d8Hk",authDomain:"baby-tracker-8fc48.firebaseapp.com",projectId:"baby-tracker-8fc48",storageBucket:"baby-tracker-8fc48.firebasestorage.app",messagingSenderId:"469326650154",appId:"1:469326650154:web:7726dfdec0db5ef7815c53"});
-const _auth=firebase.auth();
-const _db=firebase.firestore();
-let _uid=null;
-_auth.onAuthStateChanged(async user=>{
-  _uid=user?user.uid:null;
-  await loadDayData(0,false);
-  updateFoodTotal();
-  updateBabyAge();
-});
-_auth.signInAnonymously().catch(()=>{
-  // 匿名登录失败时回退到本地模式
-  loadDayData(0,false);updateFoodTotal();updateBabyAge();
-});
+// ── IndexedDB 工具函数 ──
+let _idb=null;
+function _openIDB(){
+  return new Promise((res,rej)=>{
+    if(_idb){res(_idb);return;}
+    const r=indexedDB.open('xixi-tracker',1);
+    r.onupgradeneeded=e=>e.target.result.createObjectStore('days',{keyPath:'date'});
+    r.onsuccess=e=>{_idb=e.target.result;res(_idb);};
+    r.onerror=e=>rej(e);
+  });
+}
+async function idbSave(dateStr,data){
+  const db=await _openIDB();
+  return new Promise((res,rej)=>{
+    const tx=db.transaction('days','readwrite');
+    tx.objectStore('days').put({...data,date:dateStr});
+    tx.oncomplete=res;tx.onerror=rej;
+  });
+}
+async function idbLoad(dateStr){
+  const db=await _openIDB();
+  return new Promise((res,rej)=>{
+    const tx=db.transaction('days','readonly');
+    const r=tx.objectStore('days').get(dateStr);
+    r.onsuccess=()=>res(r.result||null);r.onerror=rej;
+  });
+}
+async function idbLoadMonth(y,m){
+  const db=await _openIDB();
+  return new Promise((res,rej)=>{
+    const tx=db.transaction('days','readonly');
+    const pre=y+'-'+String(m).padStart(2,'0');
+    const r=tx.objectStore('days').getAll(IDBKeyRange.bound(pre+'-01',pre+'-31'));
+    r.onsuccess=()=>res(r.result||[]);r.onerror=rej;
+  });
+}
+// ── 页面初始化 ──
+loadDayData(0,false);
+updateFoodTotal();
+updateBabyAge();
 </script>
 </body>
 </html>
