@@ -210,9 +210,6 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
   .modal-overlay{position:fixed;border-radius:0;}
 }
 </style>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 </head>
 <body>
 <input type="file" id="photoInput" accept="image/*"/>
@@ -629,13 +626,9 @@ function switchTab(name){
   if(name==='calendar')renderCal();
 }
 
-// ── Firebase 初始化 ──
-firebase.initializeApp({apiKey:"AIzaSyD40K-YeD0yjOQoFGnIBBgUGJGWth1d8Hk",authDomain:"baby-tracker-8fc48.firebaseapp.com",projectId:"baby-tracker-8fc48",storageBucket:"baby-tracker-8fc48.firebasestorage.app",messagingSenderId:"469326650154",appId:"1:469326650154:web:7726dfdec0db5ef7815c53"});
-const _auth=firebase.auth();
-const _storage=firebase.storage();
-let _uid=null;
-_auth.signInAnonymously().catch(()=>{});
-_auth.onAuthStateChanged(u=>{_uid=u?u.uid:null;});
+// ── Cloudinary 配置 ──
+const _CLD_CLOUD='zmxspace';
+const _CLD_PRESET='xixibaby';
 
 function _showPhotoUI(src){
   const img=document.getElementById('photoImg');img.src=src;img.style.display='block';
@@ -643,7 +636,7 @@ function _showPhotoUI(src){
   document.getElementById('photoOverlay').style.display='flex';
 }
 
-// ── ③ 照片上传（Firebase Storage）──
+// ── ③ 照片上传（Cloudinary）──
 const photoInput=document.getElementById('photoInput');
 photoInput.addEventListener('change',e=>{
   const file=e.target.files[0];
@@ -657,15 +650,17 @@ photoInput.addEventListener('change',e=>{
       const cvs=document.createElement('canvas');cvs.width=w;cvs.height=h;
       cvs.getContext('2d').drawImage(raw,0,0,w,h);
       cvs.toBlob(async blob=>{
-        const dateStr=getDateKey(dateOffset).replace('baby_','');
-        if(!_uid){showToast('正在连接，请稍后重试');return;}
         showToast('上传中…');
         try{
-          const ref=_storage.ref('users/'+_uid+'/photos/'+dateStr+'.jpg');
-          await ref.put(blob,{contentType:'image/jpeg'});
-          const url=await ref.getDownloadURL();
+          const fd=new FormData();
+          fd.append('file',blob,'photo.jpg');
+          fd.append('upload_preset',_CLD_PRESET);
+          fd.append('folder','xixibaby');
+          const res=await fetch('https://api.cloudinary.com/v1_1/'+_CLD_CLOUD+'/image/upload',{method:'POST',body:fd});
+          if(!res.ok)throw new Error('upload failed');
+          const json=await res.json();
+          const url=json.secure_url;
           _showPhotoUI(url);
-          // 将 URL（很小）存入 localStorage，供日历读取
           try{localStorage.setItem(getPhotoKey(dateOffset),JSON.stringify({photoSrc:url,photoVisible:true}));}catch(err){}
           showToast('照片已上传 ✓');
         }catch(err){showToast('上传失败，请检查网络连接');}
