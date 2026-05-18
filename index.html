@@ -626,17 +626,13 @@ function switchTab(name){
   if(name==='calendar')renderCal();
 }
 
-// ── Cloudinary 配置 ──
-const _CLD_CLOUD='zmxspace';
-const _CLD_PRESET='xixibaby';
-
 function _showPhotoUI(src){
   const img=document.getElementById('photoImg');img.src=src;img.style.display='block';
   document.getElementById('photoDefault').style.display='none';
   document.getElementById('photoOverlay').style.display='flex';
 }
 
-// ── ③ 照片上传（Cloudinary）──
+// ── ③ 照片处理（压缩后存 IndexedDB，不依赖外部服务）──
 const photoInput=document.getElementById('photoInput');
 photoInput.addEventListener('change',e=>{
   const file=e.target.files[0];
@@ -644,32 +640,20 @@ photoInput.addEventListener('change',e=>{
   const reader=new FileReader();
   reader.onload=ev=>{
     const raw=new Image();
-    raw.onload=()=>{
+    raw.onload=async()=>{
       const MAX=1200;let w=raw.width,h=raw.height;
       if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
       const cvs=document.createElement('canvas');cvs.width=w;cvs.height=h;
       cvs.getContext('2d').drawImage(raw,0,0,w,h);
-      cvs.toBlob(async blob=>{
-        showToast('上传中…');
-        try{
-          const fd=new FormData();
-          fd.append('file',blob,'photo.jpg');
-          fd.append('upload_preset',_CLD_PRESET);
-          fd.append('folder','xixibaby');
-          const res=await fetch('https://api.cloudinary.com/v1_1/'+_CLD_CLOUD+'/image/upload',{method:'POST',body:fd});
-          if(!res.ok)throw new Error('upload failed');
-          const json=await res.json();
-          const url=json.secure_url;
-          _showPhotoUI(url);
-          // 保存照片 URL 到 IndexedDB
-          const _ds=getDateKey(dateOffset).replace('baby_','');
-          const _existing=await idbLoad(_ds)||{};
-          _existing.photoSrc=url;_existing.photoVisible=true;
-          await idbSave(_ds,_existing);
-          _calCache[_ds]=_existing; // 更新内存缓存
-          showToast('照片已上传 ✓');
-        }catch(err){showToast('上传失败，请检查网络连接');}
-      },'image/jpeg',0.85);
+      const base64=cvs.toDataURL('image/jpeg',0.82);
+      _showPhotoUI(base64);
+      // 存入 IndexedDB
+      const _ds=getDateKey(dateOffset).replace('baby_','');
+      const _existing=await idbLoad(_ds)||{};
+      _existing.photoSrc=base64;_existing.photoVisible=true;
+      await idbSave(_ds,_existing);
+      _calCache[_ds]=_existing;
+      showToast('照片已保存 ✓');
     };
     raw.src=ev.target.result;
   };
