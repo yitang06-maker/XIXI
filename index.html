@@ -918,7 +918,7 @@ async function saveRecord(){
     health_chip_sel:(document.querySelector('#hchips .chip.sel')||{}).textContent||'',
     health_note:document.querySelector('.healthnote').value,
     mood:document.getElementById('moodInput').value,
-    photo_url:document.getElementById('photoImg').src||'',
+    photo_url:document.getElementById('photoImg').style.display!=='none'?(document.getElementById('photoImg').src||''):'',
     photo_visible:document.getElementById('photoImg').style.display!=='none',
   };
   await sbSave(dateStr,data);
