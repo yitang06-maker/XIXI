@@ -632,7 +632,7 @@ function _showPhotoUI(src){
   document.getElementById('photoOverlay').style.display='flex';
 }
 
-// ── ③ 照片处理（压缩后存 IndexedDB，不依赖外部服务）──
+// ── ③ 照片处理（压缩后上传 Supabase Storage）──
 const photoInput=document.getElementById('photoInput');
 photoInput.addEventListener('change',e=>{
   const file=e.target.files[0];
@@ -645,15 +645,19 @@ photoInput.addEventListener('change',e=>{
       if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
       const cvs=document.createElement('canvas');cvs.width=w;cvs.height=h;
       cvs.getContext('2d').drawImage(raw,0,0,w,h);
-      const base64=cvs.toDataURL('image/jpeg',0.82);
-      _showPhotoUI(base64);
-      // 存入 IndexedDB
-      const _ds=getDateKey(dateOffset).replace('baby_','');
-      const _existing=await idbLoad(_ds)||{};
-      _existing.photoSrc=base64;_existing.photoVisible=true;
-      await idbSave(_ds,_existing);
-      _calCache[_ds]=_existing;
-      showToast('照片已保存 ✓');
+      showToast('照片上传中…');
+      cvs.toBlob(async(blob)=>{
+        const _ds=getDateKey(dateOffset).replace('baby_','');
+        try{
+          const url=await sbUploadPhoto(_ds,blob);
+          _showPhotoUI(url);
+          const _existing=await sbLoad(_ds)||{};
+          _existing.photo_url=url;_existing.photo_visible=true;
+          await sbSave(_ds,_existing);
+          _calCache[_ds]=_existing;
+          showToast('照片已保存 ✓');
+        }catch(err){showToast('照片上传失败，请重试');}
+      },'image/jpeg',0.82);
     };
     raw.src=ev.target.result;
   };
@@ -821,22 +825,28 @@ function clearDayData(){
   document.getElementById('photoOverlay').style.display='none';
 }
 function restoreDayData(data){
-  document.getElementById('foodList').innerHTML=data.foodListHTML||'';
-  document.getElementById('foodTotal').textContent=data.foodTotalText||'暂无记录';
-  document.getElementById('sleepLogList').innerHTML=data.sleepListHTML||'';
-  sleepLogs=data.sleepLogs||[];
-  document.getElementById('slNight').textContent=data.slNight||'--';
-  document.getElementById('slNap').textContent=data.slNap||'--';
-  document.getElementById('slDay').textContent=data.slDay||'--';
-  poopCnt=data.poopCnt||0;
-  document.getElementById('poopDots').innerHTML=data.poopDotsHTML||'';
+  // 兼容 Supabase snake_case 和旧版 camelCase
+  document.getElementById('foodList').innerHTML=data.food_list_html||data.foodListHTML||'';
+  document.getElementById('foodTotal').textContent=data.food_total_text||data.foodTotalText||'暂无记录';
+  document.getElementById('sleepLogList').innerHTML=data.sleep_list_html||data.sleepListHTML||'';
+  const sl=data.sleep_logs||data.sleepLogs||[];
+  sleepLogs=typeof sl==='string'?JSON.parse(sl):sl;
+  document.getElementById('slNight').textContent=data.sl_night||data.slNight||'--';
+  document.getElementById('slNap').textContent=data.sl_nap||data.slNap||'--';
+  document.getElementById('slDay').textContent=data.sl_day||data.slDay||'--';
+  poopCnt=data.poop_cnt||data.poopCnt||0;
+  document.getElementById('poopDots').innerHTML=data.poop_dots_html||data.poopDotsHTML||'';
   document.getElementById('poopCount').textContent=poopCnt+'次';
-  document.querySelectorAll('#pchips .chip').forEach(c=>c.classList.toggle('sel',c.textContent.trim()===data.poopChipSel));
-  document.querySelectorAll('#hchips .chip').forEach(c=>c.classList.toggle('sel',c.textContent.trim()===data.healthChipSel));
-  document.querySelector('.healthnote').value=data.healthNote||'';
+  const pcs=data.poop_chip_sel||data.poopChipSel||'';
+  document.querySelectorAll('#pchips .chip').forEach(c=>c.classList.toggle('sel',c.textContent.trim()===pcs));
+  const hcs=data.health_chip_sel||data.healthChipSel||'';
+  document.querySelectorAll('#hchips .chip').forEach(c=>c.classList.toggle('sel',c.textContent.trim()===hcs));
+  document.querySelector('.healthnote').value=data.health_note||data.healthNote||'';
   document.getElementById('moodInput').value=data.mood||'';
-  if(data.photoSrc&&data.photoVisible){
-    const img=document.getElementById('photoImg');img.src=data.photoSrc;img.style.display='block';
+  const photoUrl=data.photo_url||data.photoSrc||'';
+  const photoVis=data.photo_visible!=null?data.photo_visible:data.photoVisible;
+  if(photoUrl&&photoVis){
+    const img=document.getElementById('photoImg');img.src=photoUrl;img.style.display='block';
     document.getElementById('photoDefault').style.display='none';
     document.getElementById('photoOverlay').style.display='flex';
   }else{
@@ -848,19 +858,20 @@ function restoreDayData(data){
 }
 async function loadDayData(offset,clearIfEmpty){
   const dateStr=getDateKey(offset).replace('baby_','');
-  // 优先从 IndexedDB 加载
-  const idata=await idbLoad(dateStr);
-  if(idata){
-    restoreDayData(idata);
-    if(idata.photoSrc&&idata.photoVisible)_showPhotoUI(idata.photoSrc);
-    return;
-  }
+  // 优先从 Supabase 加载
+  try{
+    const sdata=await sbLoad(dateStr);
+    if(sdata){
+      restoreDayData(sdata);
+      const pu=sdata.photo_url;
+      if(pu&&sdata.photo_visible)_showPhotoUI(pu);
+      return;
+    }
+  }catch(e){console.warn('Supabase load error',e);}
   // 回退到 localStorage（兼容旧数据）
   const saved=localStorage.getItem(getDateKey(offset));
   if(saved){try{const d=JSON.parse(saved);restoreDayData(d);if(d.photoSrc&&d.photoVisible)_showPhotoUI(d.photoSrc);}catch(e){}}
   else if(clearIfEmpty)clearDayData();
-  const photo=loadPhotoForKey(getPhotoKey(offset));
-  if(photo&&photo.photoSrc&&photo.photoVisible)_showPhotoUI(photo.photoSrc);
 }
 
 // ── 食物总量 ──
@@ -894,23 +905,23 @@ function deleteSleepLog(start,end,btn){
 async function saveRecord(){
   const dateStr=getDateKey(dateOffset).replace('baby_','');
   const data={
-    foodListHTML:document.getElementById('foodList').innerHTML,
-    foodTotalText:document.getElementById('foodTotal').textContent,
-    sleepListHTML:document.getElementById('sleepLogList').innerHTML,
-    sleepLogs:sleepLogs,
-    slNight:document.getElementById('slNight').textContent,
-    slNap:document.getElementById('slNap').textContent,
-    slDay:document.getElementById('slDay').textContent,
-    poopCnt:poopCnt,
-    poopDotsHTML:document.getElementById('poopDots').innerHTML,
-    poopChipSel:(document.querySelector('#pchips .chip.sel')||{}).textContent||'',
-    healthChipSel:(document.querySelector('#hchips .chip.sel')||{}).textContent||'',
-    healthNote:document.querySelector('.healthnote').value,
+    food_list_html:document.getElementById('foodList').innerHTML,
+    food_total_text:document.getElementById('foodTotal').textContent,
+    sleep_list_html:document.getElementById('sleepLogList').innerHTML,
+    sleep_logs:JSON.stringify(sleepLogs),
+    sl_night:document.getElementById('slNight').textContent,
+    sl_nap:document.getElementById('slNap').textContent,
+    sl_day:document.getElementById('slDay').textContent,
+    poop_cnt:poopCnt,
+    poop_dots_html:document.getElementById('poopDots').innerHTML,
+    poop_chip_sel:(document.querySelector('#pchips .chip.sel')||{}).textContent||'',
+    health_chip_sel:(document.querySelector('#hchips .chip.sel')||{}).textContent||'',
+    health_note:document.querySelector('.healthnote').value,
     mood:document.getElementById('moodInput').value,
-    photoSrc:document.getElementById('photoImg').src||'',
-    photoVisible:document.getElementById('photoImg').style.display!=='none',
+    photo_url:document.getElementById('photoImg').src||'',
+    photo_visible:document.getElementById('photoImg').style.display!=='none',
   };
-  await idbSave(dateStr,data);
+  await sbSave(dateStr,data);
   showToast('今日记录已保存 ✓');
 }
 
@@ -962,9 +973,8 @@ function calcSleepStr(logs){
   return h>0?(h+'h'+(mn>0?' '+mn+'m':'')):(mn+'m');
 }
 async function renderCal(){
-  // 从 IndexedDB 加载当月数据到内存缓存
-  const monthData=await idbLoadMonth(curY,curM);
-  monthData.forEach(row=>{_calCache[row.date]=row;});
+  // 从 Supabase 加载当月数据到内存缓存
+  try{const monthData=await sbLoadMonth(curY,curM);monthData.forEach(row=>{_calCache[row.date]=row;});}catch(e){console.warn('renderCal load error',e);}
   document.getElementById('mLabel').textContent=curY+'年'+curM+'月';
   const grid=document.getElementById('dayGrid');grid.innerHTML='';
   const first=new Date(curY,curM-1,1).getDay();
@@ -987,7 +997,7 @@ async function renderCal(){
     if(d===todayD)cell.classList.add('today');
     if(d===selD)cell.classList.add('sel');
     // 读照片
-    const cellPhoto=stored&&stored.photoSrc&&stored.photoVisible?stored.photoSrc:null;
+    const cellPhoto=stored&&(stored.photo_url||stored.photoSrc)&&(stored.photo_visible!=null?stored.photo_visible:stored.photoVisible)?(stored.photo_url||stored.photoSrc):null;
     if(cellPhoto){
       const ti=document.createElement('img');ti.src=cellPhoto;ti.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;opacity:.75;';
       cell.style.position='relative';cell.style.overflow='hidden';
@@ -1028,17 +1038,19 @@ function updateDetail(d){
     // 优先使用真实 localStorage 数据
     moodEl.textContent=stored.mood||'（无心情记录）';
     moodEl.style.color=stored.mood?'#888780':'#D3D1C7';
-    // 食物总量：从 foodTotalText 提取
+    // 食物总量
     let foodStr='--';
-    const ft=stored.foodTotalText||'';
+    const ft=stored.food_total_text||stored.foodTotalText||'';
     if(ft&&ft!=='暂无记录'){const fm=ft.match(/\d+ml/i);foodStr=fm?fm[0]:ft.replace('今日总量','').trim()||'--';}
     document.getElementById('dFood').textContent=foodStr;
     // 睡眠：从 sleepLogs 合计
-    document.getElementById('dSleep').textContent=calcSleepStr(stored.sleepLogs);
+    const sl=stored.sleep_logs||stored.sleepLogs||[];
+    document.getElementById('dSleep').textContent=calcSleepStr(typeof sl==='string'?JSON.parse(sl):sl);
     // 便便
-    document.getElementById('dPoop').textContent=(stored.poopCnt||0)>0?(stored.poopCnt+'次'):'--';
-    // 补剂（未单独存储，显示健康状态标签）
-    const hc=stored.healthChipSel||'';
+    const pc=stored.poop_cnt||stored.poopCnt||0;
+    document.getElementById('dPoop').textContent=pc>0?(pc+'次'):'--';
+    // 健康标签
+    const hc=stored.health_chip_sel||stored.healthChipSel||'';
     document.getElementById('dSupp').textContent=hc||'--';
   } else if(rec){
     moodEl.textContent=rec.mood;moodEl.style.color='#888780';
@@ -1053,47 +1065,34 @@ function updateDetail(d){
   // 照片
   const dImg=document.getElementById('detphotoImg');
   const dEmp=document.getElementById('detphotoEmpty');
-  const photoSrc=stored&&stored.photoSrc&&stored.photoVisible?stored.photoSrc:null;
+  const photoSrc=stored&&(stored.photo_url||stored.photoSrc)&&(stored.photo_visible!=null?stored.photo_visible:stored.photoVisible)?(stored.photo_url||stored.photoSrc):null;
   if(photoSrc){dImg.src=photoSrc;dImg.style.display='block';dImg.style.width='100%';dImg.style.height='auto';dEmp.style.display='none';}
   else{dImg.style.display='none';dEmp.style.display='flex';}
 }
 document.getElementById('prevM').addEventListener('click',()=>{curM--;if(curM<1){curM=12;curY--;}renderCal();});
 document.getElementById('nextM').addEventListener('click',()=>{curM++;if(curM>12){curM=1;curY++;}renderCal();});
-// ── IndexedDB 工具函数 ──
-let _idb=null;
-function _openIDB(){
-  return new Promise((res,rej)=>{
-    if(_idb){res(_idb);return;}
-    const r=indexedDB.open('xixi-tracker',1);
-    r.onupgradeneeded=e=>e.target.result.createObjectStore('days',{keyPath:'date'});
-    r.onsuccess=e=>{_idb=e.target.result;res(_idb);};
-    r.onerror=e=>rej(e);
-  });
+// ── Supabase 工具函数 ──
+const SUPA_URL='https://bcznaghxijilvksxqfrv.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJjem5hZ2h4aWppbHZrc3hxZnJ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwODMyMzUsImV4cCI6MjA5NDY1OTIzNX0.BKUn99fZ4EHWYJ5TFPbLN93Cms6WFaUOybfcpPeIgJk';
+const _sh={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+async function sbSave(dateStr,data){
+  const r=await fetch(SUPA_URL+'/rest/v1/baby_records',{method:'POST',headers:{..._sh,'Prefer':'resolution=merge-duplicates'},body:JSON.stringify({date:dateStr,...data})});
+  if(!r.ok){const e=await r.text();throw new Error(e);}
 }
-async function idbSave(dateStr,data){
-  const db=await _openIDB();
-  return new Promise((res,rej)=>{
-    const tx=db.transaction('days','readwrite');
-    tx.objectStore('days').put({...data,date:dateStr});
-    tx.oncomplete=res;tx.onerror=rej;
-  });
+async function sbLoad(dateStr){
+  const r=await fetch(SUPA_URL+'/rest/v1/baby_records?date=eq.'+dateStr+'&limit=1',{headers:_sh});
+  const d=await r.json();return d[0]||null;
 }
-async function idbLoad(dateStr){
-  const db=await _openIDB();
-  return new Promise((res,rej)=>{
-    const tx=db.transaction('days','readonly');
-    const r=tx.objectStore('days').get(dateStr);
-    r.onsuccess=()=>res(r.result||null);r.onerror=rej;
-  });
+async function sbLoadMonth(y,m){
+  const from=y+'-'+String(m).padStart(2,'0')+'-01';
+  const to=y+'-'+String(m).padStart(2,'0')+'-31';
+  const r=await fetch(SUPA_URL+'/rest/v1/baby_records?date=gte.'+from+'&date=lte.'+to,{headers:_sh});
+  const d=await r.json();return Array.isArray(d)?d:[];
 }
-async function idbLoadMonth(y,m){
-  const db=await _openIDB();
-  return new Promise((res,rej)=>{
-    const tx=db.transaction('days','readonly');
-    const pre=y+'-'+String(m).padStart(2,'0');
-    const r=tx.objectStore('days').getAll(IDBKeyRange.bound(pre+'-01',pre+'-31'));
-    r.onsuccess=()=>res(r.result||[]);r.onerror=rej;
-  });
+async function sbUploadPhoto(dateStr,blob){
+  const r=await fetch(SUPA_URL+'/storage/v1/object/photos/'+dateStr+'.jpg',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'image/jpeg','x-upsert':'true'},body:blob});
+  if(!r.ok)throw new Error('照片上传失败');
+  return SUPA_URL+'/storage/v1/object/public/photos/'+dateStr+'.jpg';
 }
 // ── 页面初始化 ──
 loadDayData(0,false);
