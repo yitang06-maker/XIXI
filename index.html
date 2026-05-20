@@ -42,7 +42,7 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
 .logrow{display:flex;align-items:center;padding:8px 10px;background:var(--bg);border-radius:12px;margin-bottom:6px;gap:10px;}
 .logtime{font-size:14px;color:var(--text2);min-width:36px;}
 .logdesc{font-size:15px;color:var(--text);flex:1;}
-.logamt{font-size:14px;font-weight:600;color:#fff;background:#FAC775;padding:2px 8px;border-radius:8px;}
+.logamt{font-size:13px;font-weight:400;color:#fff;background:#FAC775;padding:2px 8px;border-radius:8px;}
 .sechead{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
 .secicon{width:30px;height:30px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
 .sectitle{font-size:16px;font-weight:500;color:var(--text);flex:1;}
@@ -298,12 +298,8 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
           <span class="sectitle">喂养</span>
           <div class="addbtn" onclick="openModal('food')"><i class="ti ti-plus" style="font-size:12px"></i>添加</div>
         </div>
-        <div id="foodList">
-          <div class="logrow"><span class="logtime">07:30</span><span style="font-size:16px;">🍼</span><span class="logdesc">母乳 + 配方奶</span><span class="logamt">180ml</span><span class="delbtn">×</span></div>
-          <div class="logrow"><span class="logtime">10:00</span><span style="font-size:16px;">🥣</span><span class="logdesc">米粉 · 南瓜泥</span><span class="logamt">60g</span><span class="delbtn">×</span></div>
-          <div class="logrow"><span class="logtime">13:30</span><span style="font-size:16px;">🍼</span><span class="logdesc">配方奶</span><span class="logamt">150ml</span><span class="delbtn">×</span></div>
-        </div>
-        <div id="foodTotal" style="text-align:center;font-size:14px;color:var(--text2);margin-top:6px;">今日总量 390ml + 辅食</div>
+        <div id="foodList"></div>
+        <div id="foodTotal" style="text-align:center;font-size:14px;color:var(--text2);margin-top:6px;">开始记录吧～</div>
       </div>
 
       <!-- ⑤ 睡眠 -->
@@ -329,15 +325,15 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
           <div class="secicon" style="background:var(--green-bg);color:#3B6D11;"><i class="ti ti-leaf"></i></div>
           <span class="sectitle">便便</span>
         </div>
-        <div style="font-size:14px;color:var(--text2);margin-bottom:8px;">今日次数</div>
-        <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;" id="poopCountRow">
-          <div style="display:flex;gap:8px;" id="poopDots">
-            <div style="width:32px;height:32px;border-radius:50%;background:var(--white);border:.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1;">💩</div>
-            <div style="width:32px;height:32px;border-radius:50%;background:var(--white);border:.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1;">💩</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="font-size:14px;color:var(--text2);">今日次数</div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div onclick="addPoop()" style="cursor:pointer;width:28px;height:28px;flex-shrink:0;border-radius:50%;border:1px solid #D3D1C7;background:var(--white);display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:500;color:#5F5E5A;">+</div>
+            <span style="font-size:15px;color:#444441;min-width:28px;text-align:center;" id="poopCount">0次</span>
+            <div onclick="removePoop()" style="cursor:pointer;width:28px;height:28px;flex-shrink:0;border-radius:50%;border:1px solid #D3D1C7;background:var(--white);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:500;color:#5F5E5A;line-height:1;">−</div>
           </div>
-          <div style="width:32px;height:32px;border-radius:50%;border:.5px dashed var(--border2);display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:pointer;background:var(--white);" onclick="addPoop()">+</div>
-          <span style="font-size:15px;color:#444441;" id="poopCount">2次</span>
         </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;" id="poopDots"></div>
         <div style="font-size:14px;color:var(--text2);margin-bottom:8px;">性状</div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;" id="pchips">
           <div class="chip sel">正常</div><div class="chip">偏稀</div><div class="chip">偏干</div><div class="chip">带血丝</div><div class="chip">绿色</div>
@@ -351,9 +347,9 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
           <span class="sectitle">今日补剂</span>
         </div>
         <div class="suppgrid">
-          <div class="suppitem"><span class="suppname">维生素D</span><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
+          <div class="suppitem"><span class="suppname">维生素D</span><div class="toggle off" onclick="this.classList.toggle('off')"></div></div>
           <div class="suppitem"><span class="suppname">DHA</span><div class="toggle off" onclick="this.classList.toggle('off')"></div></div>
-          <div class="suppitem"><span class="suppname">益生菌</span><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
+          <div class="suppitem"><span class="suppname">益生菌</span><div class="toggle off" onclick="this.classList.toggle('off')"></div></div>
           <div class="suppitem"><span class="suppname">铁剂</span><div class="toggle off" onclick="this.classList.toggle('off')"></div></div>
         </div>
       </div>
@@ -365,7 +361,7 @@ body{font-family:var(--font);background:#E8E6E0;display:flex;justify-content:cen
           <span class="sectitle">身体状况</span>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;" id="hchips">
-          <div class="chip sel">一切正常 ✓</div><div class="chip">发烧</div><div class="chip">咳嗽</div><div class="chip">出疹</div><div class="chip">哭闹</div>
+          <div class="chip sel">一切正常</div><div class="chip">发烧</div><div class="chip">咳嗽</div><div class="chip">出疹</div><div class="chip">哭闹</div>
         </div>
         <textarea class="healthnote" rows="2" placeholder="有什么要备注的写这里，比如出牙、打疫苗…"></textarea>
       </div>
@@ -641,23 +637,25 @@ photoInput.addEventListener('change',e=>{
   reader.onload=ev=>{
     const raw=new Image();
     raw.onload=async()=>{
-      const MAX=1200;let w=raw.width,h=raw.height;
+      const MAX=900;let w=raw.width,h=raw.height;
       if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
       const cvs=document.createElement('canvas');cvs.width=w;cvs.height=h;
       cvs.getContext('2d').drawImage(raw,0,0,w,h);
+      // 立即显示本地预览，无需等待上传
+      _showPhotoUI(cvs.toDataURL('image/jpeg',0.75));
       showToast('照片上传中…');
       cvs.toBlob(async(blob)=>{
         const _ds=getDateKey(dateOffset).replace('baby_','');
         try{
           const url=await sbUploadPhoto(_ds,blob);
-          _showPhotoUI(url);
+          document.getElementById('photoImg').src=url;
           const _existing=await sbLoad(_ds)||{};
           _existing.photo_url=url;_existing.photo_visible=true;
           await sbSave(_ds,_existing);
           _calCache[_ds]=_existing;
           showToast('照片已保存 ✓');
-        }catch(err){showToast('照片上传失败，请重试');}
-      },'image/jpeg',0.82);
+        }catch(err){showToast('上传失败: '+err.message);}
+      },'image/jpeg',0.75);
     };
     raw.src=ev.target.result;
   };
@@ -680,15 +678,27 @@ document.getElementById('foodList').addEventListener('click',e=>{
 });
 
 // ── 便便计数 ──
-let poopCnt=2;
-function addPoop(){
-  poopCnt++;
-  const dots=document.getElementById('poopDots');
+let poopCnt=0;
+function _makePoop(){
   const d=document.createElement('div');
   d.style.cssText='width:32px;height:32px;border-radius:50%;background:var(--white);border:.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1;';
   d.textContent='💩';
-  dots.appendChild(d);
-  document.getElementById('poopCount').textContent=poopCnt+'次';
+  return d;
+}
+function _updatePoopUI(){
+  document.getElementById('poopCount').textContent=poopCnt>0?poopCnt+'次':'0次';
+}
+function addPoop(){
+  poopCnt++;
+  document.getElementById('poopDots').appendChild(_makePoop());
+  _updatePoopUI();
+}
+function removePoop(){
+  if(poopCnt<=0)return;
+  poopCnt--;
+  const dots=document.getElementById('poopDots');
+  if(dots.lastChild)dots.removeChild(dots.lastChild);
+  _updatePoopUI();
 }
 
 // ── Modal ──
@@ -714,12 +724,14 @@ function confirmFood(){
   const time=document.getElementById('foodTime').value||'--';
   const amt=document.getElementById('foodAmt').value.trim();
   const note=document.getElementById('foodNote').value.trim();
-  if(!amt){showToast('请填写数量');return;}
+  const isBreast=type.includes('母乳');
+  if(!amt&&!isBreast){showToast('请填写数量');return;}
   const emoji=foodTypeEmoji[type]||'🍼';
   const desc=type.replace(/^[^ ]+ /,'')+( note?' · '+note:'');
   const row=document.createElement('div');
   row.className='logrow';
-  row.innerHTML='<span class="logtime">'+time+'</span><span style="font-size:16px;">'+emoji+'</span><span class="logdesc">'+desc+'</span><span class="logamt">'+amt+'</span><span class="delbtn">×</span>';
+  const amtHtml=amt?'<span class="logamt">'+amt+'</span>':'';
+  row.innerHTML='<span class="logtime">'+time+'</span><span style="font-size:16px;">'+emoji+'</span><span class="logdesc">'+desc+'</span>'+amtHtml+'<span class="delbtn">×</span>';
   document.getElementById('foodList').appendChild(row);
   updateFoodTotal();
   // reset
@@ -732,7 +744,7 @@ function confirmFood(){
 // ── ⑤ 睡眠确认 ──
 let sleepLogs=[];
 function timeToMins(t){const[h,m]=t.split(':').map(Number);return h*60+m;}
-function minsToStr(m){const h=Math.floor(m/60);const mn=m%60;return h>0?(h+'h'+(mn>0?' '+mn+'m':'')):(mn+'m');}
+function minsToStr(m){const h=Math.floor(m/60);const mn=m%60;return h>0?(h+'h'+(mn>0?mn+'m':'')):(mn+'m');}
 function updateSleepPreview(){
   const s=document.getElementById('sleepStart').value;
   const e=document.getElementById('sleepEnd').value;
@@ -806,7 +818,7 @@ function loadPhotoForKey(photoKey){
 }
 function clearDayData(){
   document.getElementById('foodList').innerHTML='';
-  document.getElementById('foodTotal').textContent='暂无记录';
+  document.getElementById('foodTotal').textContent='开始记录吧～';
   document.getElementById('sleepLogList').innerHTML='';
   sleepLogs=[];
   document.getElementById('slNight').textContent='--';
@@ -827,7 +839,7 @@ function clearDayData(){
 function restoreDayData(data){
   // 兼容 Supabase snake_case 和旧版 camelCase
   document.getElementById('foodList').innerHTML=data.food_list_html||data.foodListHTML||'';
-  document.getElementById('foodTotal').textContent=data.food_total_text||data.foodTotalText||'暂无记录';
+  document.getElementById('foodTotal').textContent=data.food_total_text||data.foodTotalText||'开始记录吧～';
   document.getElementById('sleepLogList').innerHTML=data.sleep_list_html||data.sleepListHTML||'';
   const sl=data.sleep_logs||data.sleepLogs||[];
   sleepLogs=typeof sl==='string'?JSON.parse(sl):sl;
@@ -835,14 +847,16 @@ function restoreDayData(data){
   document.getElementById('slNap').textContent=data.sl_nap||data.slNap||'--';
   document.getElementById('slDay').textContent=data.sl_day||data.slDay||'--';
   poopCnt=data.poop_cnt||data.poopCnt||0;
-  document.getElementById('poopDots').innerHTML=data.poop_dots_html||data.poopDotsHTML||'';
-  document.getElementById('poopCount').textContent=poopCnt+'次';
+  const _pd=document.getElementById('poopDots');_pd.innerHTML='';
+  for(let _i=0;_i<poopCnt;_i++)_pd.appendChild(_makePoop());
+  _updatePoopUI();
   const pcs=data.poop_chip_sel||data.poopChipSel||'';
   document.querySelectorAll('#pchips .chip').forEach(c=>c.classList.toggle('sel',c.textContent.trim()===pcs));
   const hcs=data.health_chip_sel||data.healthChipSel||'';
   document.querySelectorAll('#hchips .chip').forEach(c=>c.classList.toggle('sel',c.textContent.trim()===hcs));
   document.querySelector('.healthnote').value=data.health_note||data.healthNote||'';
   document.getElementById('moodInput').value=data.mood||'';
+  if(data.supp_state){try{const ss=JSON.parse(data.supp_state);document.querySelectorAll('.suppgrid .toggle').forEach((t,i)=>t.classList.toggle('off',!ss[i]));}catch(e){}}
   const photoUrl=data.photo_url||data.photoSrc||'';
   const photoVis=data.photo_visible!=null?data.photo_visible:data.photoVisible;
   if(photoUrl&&photoVis){
@@ -885,7 +899,7 @@ function updateFoodTotal(){
     if(/\d+\s*g\b/i.test(t))hasSolid=true;
   });
   const el=document.getElementById('foodTotal');
-  if(!rows.length){el.textContent='暂无记录';return;}
+  if(!rows.length){el.textContent='开始记录吧～';return;}
   let txt='今日总量';
   if(totalMl)txt+=' '+totalMl+'ml';
   if(hasSolid)txt+=' + 辅食';
@@ -912,6 +926,7 @@ async function saveRecord(){
     sl_night:document.getElementById('slNight').textContent,
     sl_nap:document.getElementById('slNap').textContent,
     sl_day:document.getElementById('slDay').textContent,
+    supp_state:JSON.stringify([...document.querySelectorAll('.suppgrid .toggle')].map(t=>!t.classList.contains('off'))),
     poop_cnt:poopCnt,
     poop_dots_html:document.getElementById('poopDots').innerHTML,
     poop_chip_sel:(document.querySelector('#pchips .chip.sel')||{}).textContent||'',
@@ -970,7 +985,7 @@ function calcSleepStr(logs){
   const total=(logs||[]).reduce((a,l)=>a+(l.dur||0),0);
   if(!total)return '--';
   const h=Math.floor(total/60),mn=total%60;
-  return h>0?(h+'h'+(mn>0?' '+mn+'m':'')):(mn+'m');
+  return h>0?(h+'h'+(mn>0?mn+'m':'')):(mn+'m');
 }
 async function renderCal(){
   // 从 Supabase 加载当月数据到内存缓存
@@ -999,7 +1014,7 @@ async function renderCal(){
     // 读照片
     const cellPhoto=stored&&(stored.photo_url||stored.photoSrc)&&(stored.photo_visible!=null?stored.photo_visible:stored.photoVisible)?(stored.photo_url||stored.photoSrc):null;
     if(cellPhoto){
-      const ti=document.createElement('img');ti.src=cellPhoto;ti.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;opacity:.75;';
+      const ti=document.createElement('img');ti.src=cellPhoto;ti.loading='lazy';ti.decoding='async';ti.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit;opacity:.75;';
       cell.style.position='relative';cell.style.overflow='hidden';
       cell.appendChild(ti);
     } else if(stored){
@@ -1041,7 +1056,7 @@ function updateDetail(d){
     // 食物总量
     let foodStr='--';
     const ft=stored.food_total_text||stored.foodTotalText||'';
-    if(ft&&ft!=='暂无记录'){const fm=ft.match(/\d+ml/i);foodStr=fm?fm[0]:ft.replace('今日总量','').trim()||'--';}
+    if(ft&&ft!=='开始记录吧～'){const fm=ft.match(/\d+ml/i);foodStr=fm?fm[0]:ft.replace('今日总量','').trim()||'--';}
     document.getElementById('dFood').textContent=foodStr;
     // 睡眠：从 sleepLogs 合计
     const sl=stored.sleep_logs||stored.sleepLogs||[];
@@ -1050,7 +1065,7 @@ function updateDetail(d){
     const pc=stored.poop_cnt||stored.poopCnt||0;
     document.getElementById('dPoop').textContent=pc>0?(pc+'次'):'--';
     // 健康标签
-    const hc=stored.health_chip_sel||stored.healthChipSel||'';
+    const hc=(stored.health_chip_sel||stored.healthChipSel||'').replace('✓','').trim();
     document.getElementById('dSupp').textContent=hc||'--';
   } else if(rec){
     moodEl.textContent=rec.mood;moodEl.style.color='#888780';
@@ -1066,7 +1081,7 @@ function updateDetail(d){
   const dImg=document.getElementById('detphotoImg');
   const dEmp=document.getElementById('detphotoEmpty');
   const photoSrc=stored&&(stored.photo_url||stored.photoSrc)&&(stored.photo_visible!=null?stored.photo_visible:stored.photoVisible)?(stored.photo_url||stored.photoSrc):null;
-  if(photoSrc){dImg.src=photoSrc;dImg.style.display='block';dImg.style.width='100%';dImg.style.height='auto';dEmp.style.display='none';}
+  if(photoSrc){dImg.src=photoSrc;dImg.loading='lazy';dImg.decoding='async';dImg.style.display='block';dImg.style.width='100%';dImg.style.height='auto';dEmp.style.display='none';}
   else{dImg.style.display='none';dEmp.style.display='flex';}
 }
 document.getElementById('prevM').addEventListener('click',()=>{curM--;if(curM<1){curM=12;curY--;}renderCal();});
@@ -1090,9 +1105,9 @@ async function sbLoadMonth(y,m){
   const d=await r.json();return Array.isArray(d)?d:[];
 }
 async function sbUploadPhoto(dateStr,blob){
-  const r=await fetch(SUPA_URL+'/storage/v1/object/photos/'+dateStr+'.jpg',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'image/jpeg','x-upsert':'true'},body:blob});
-  if(!r.ok)throw new Error('照片上传失败');
-  return SUPA_URL+'/storage/v1/object/public/photos/'+dateStr+'.jpg';
+  const r=await fetch(SUPA_URL+'/storage/v1/object/photo/'+dateStr+'.jpg',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'image/jpeg','x-upsert':'true'},body:blob});
+  if(!r.ok){const e=await r.text();throw new Error(r.status+': '+e);}
+  return SUPA_URL+'/storage/v1/object/public/photo/'+dateStr+'.jpg';
 }
 // ── 页面初始化 ──
 loadDayData(0,false);
